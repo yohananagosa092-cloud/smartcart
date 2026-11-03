@@ -1,0 +1,32 @@
+# Android / Gradle
+.gradle/
+build/
+local.properties
+captures/
+*.apk
+*.aab
+*.iml
+.idea/
+.kotlin/
+
+# Node / Cloud Functions
+node_modules/
+functions/lib/
+
+# Firebase
+.firebase/
+*-debug.log
+ui-debug.log
+
+# Secrets: never commit these
+google-services.json
+serviceAccount*.json
+*-firebase-adminsdk-*.json
+*.jks
+*.keystore
+.env
+.env.*
+
+# OS
+.DS_Store
+Thumbs.db
