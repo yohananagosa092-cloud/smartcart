@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- גרף הניווט של SmartCart: 18 המסכים ממסמך האפיון. -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/signInFragment">
+
+    <!-- 01 · התחברות -->
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.smartcart.app.ui.auth.SignInFragment"
+        tools:layout="@layout/fragment_sign_in">
+        <action
+            android:id="@+id/action_signIn_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/signInFragment"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_signIn_to_createAccount"
+            app:destination="@id/createAccountFragment" />
+        <action
+            android:id="@+id/action_signIn_to_resetPassword"
+            app:destination="@id/resetPasswordFragment" />
+        <action
+            android:id="@+id/action_signIn_to_verifyEmail"
+            app:destination="@id/verifyEmailFragment" />
+    </fragment>
+
+    <!-- 02 · הרשמה -->
+    <fragment
+        android:id="@+id/createAccountFragment"
+        android:name="com.smartcart.app.ui.auth.CreateAccountFragment"
+        tools:layout="@layout/fragment_create_account">
+        <action
+            android:id="@+id/action_createAccount_to_verifyEmail"
+            app:destination="@id/verifyEmailFragment" />
+    </fragment>
+
+    <!-- 03 · אימות מייל -->
+    <fragment
+        android:id="@+id/verifyEmailFragment"
+        android:name="com.smartcart.app.ui.auth.VerifyEmailFragment"
+        tools:layout="@layout/fragment_verify_email">
+        <action
+            android:id="@+id/action_verifyEmail_to_home"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/signInFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 04 · איפוס סיסמה -->
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.smartcart.app.ui.auth.ResetPasswordFragment"
+        tools:layout="@layout/fragment_reset_password">
+    </fragment>
+
+    <!-- 05 · מסך הבית -->
+    <fragment
+        android:id="@+id/homeFragment"
+        android:name="com.smartcart.app.ui.lists.HomeFragment"
+        tools:layout="@layout/fragment_home">
+        <action
+            android:id="@+id/action_home_to_newList"
+            app:destination="@id/newListFragment" />
+        <action
+            android:id="@+id/action_home_to_myLists"
+            app:destination="@id/myListsFragment" />
+        <action
+            android:id="@+id/action_home_to_listEditor"
+            app:destination="@id/listEditorFragment" />
+        <action
+            android:id="@+id/action_home_to_sharedLists"
+            app:destination="@id/sharedListsFragment" />
+        <action
+            android:id="@+id/action_home_to_profile"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <!-- 06 · רשימה חדשה -->
+    <fragment
+        android:id="@+id/newListFragment"
+        android:name="com.smartcart.app.ui.lists.NewListFragment"
+        tools:layout="@layout/fragment_new_list">
+        <action
+            android:id="@+id/action_newList_to_listEditor"
+            app:destination="@id/listEditorFragment"
+            app:popUpTo="@id/newListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 07 · הוספת מוצרים -->
+    <fragment
+        android:id="@+id/addProductsFragment"
+        android:name="com.smartcart.app.ui.lists.AddProductsFragment"
+        tools:layout="@layout/fragment_add_products">
+    </fragment>
+
+    <!-- 08 · עריכת רשימה -->
+    <fragment
+        android:id="@+id/listEditorFragment"
+        android:name="com.smartcart.app.ui.lists.ListEditorFragment"
+        tools:layout="@layout/fragment_list_editor">
+        <action
+            android:id="@+id/action_listEditor_to_addProducts"
+            app:destination="@id/addProductsFragment" />
+        <action
+            android:id="@+id/action_listEditor_to_shareList"
+            app:destination="@id/shareListFragment" />
+        <action
+            android:id="@+id/action_listEditor_to_members"
+            app:destination="@id/membersFragment" />
+        <action
+            android:id="@+id/action_listEditor_to_comparisonType"
+            app:destination="@id/comparisonTypeFragment" />
+    </fragment>
+
+    <!-- 09 · הרשימות שלי -->
+    <fragment
+        android:id="@+id/myListsFragment"
+        android:name="com.smartcart.app.ui.lists.MyListsFragment"
+        tools:layout="@layout/fragment_my_lists">
+        <action
+            android:id="@+id/action_myLists_to_listEditor"
+            app:destination="@id/listEditorFragment" />
+    </fragment>
+
+    <!-- 10 · שיתוף רשימה -->
+    <fragment
+        android:id="@+id/shareListFragment"
+        android:name="com.smartcart.app.ui.lists.ShareListFragment"
+        tools:layout="@layout/fragment_share_list">
+    </fragment>
+
+    <!-- 11 · סוג ההשוואה -->
+    <fragment
+        android:id="@+id/comparisonTypeFragment"
+        android:name="com.smartcart.app.ui.compare.ComparisonTypeFragment"
+        tools:layout="@layout/fragment_comparison_type">
+        <action
+            android:id="@+id/action_comparisonType_to_comparing"
+            app:destination="@id/comparingFragment" />
+    </fragment>
+
+    <!-- 12 · חישוב ההשוואה -->
+    <fragment
+        android:id="@+id/comparingFragment"
+        android:name="com.smartcart.app.ui.compare.ComparingFragment"
+        tools:layout="@layout/fragment_comparing">
+        <action
+            android:id="@+id/action_comparing_to_results"
+            app:destination="@id/resultsFragment"
+            app:popUpTo="@id/comparingFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 13 · תוצאות ההשוואה -->
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="com.smartcart.app.ui.compare.ResultsFragment"
+        tools:layout="@layout/fragment_results">
+        <action
+            android:id="@+id/action_results_to_chainBreakdown"
+            app:destination="@id/chainBreakdownFragment" />
+    </fragment>
+
+    <!-- 14 · פירוט לפי רשת -->
+    <fragment
+        android:id="@+id/chainBreakdownFragment"
+        android:name="com.smartcart.app.ui.compare.ChainBreakdownFragment"
+        tools:layout="@layout/fragment_chain_breakdown">
+    </fragment>
+
+    <!-- 15 · הצטרפות לרשימה -->
+    <fragment
+        android:id="@+id/joinListFragment"
+        android:name="com.smartcart.app.ui.sharing.JoinListFragment"
+        tools:layout="@layout/fragment_join_list">
+        <action
+            android:id="@+id/action_joinList_to_listEditor"
+            app:destination="@id/listEditorFragment"
+            app:popUpTo="@id/joinListFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <!-- 16 · רשימות משותפות -->
+    <fragment
+        android:id="@+id/sharedListsFragment"
+        android:name="com.smartcart.app.ui.sharing.SharedListsFragment"
+        tools:layout="@layout/fragment_shared_lists">
+        <action
+            android:id="@+id/action_sharedLists_to_listEditor"
+            app:destination="@id/listEditorFragment" />
+        <action
+            android:id="@+id/action_sharedLists_to_joinList"
+            app:destination="@id/joinListFragment" />
+    </fragment>
+
+    <!-- 17 · ניהול משתתפות -->
+    <fragment
+        android:id="@+id/membersFragment"
+        android:name="com.smartcart.app.ui.sharing.MembersFragment"
+        tools:layout="@layout/fragment_members">
+        <action
+            android:id="@+id/action_members_to_shareList"
+            app:destination="@id/shareListFragment" />
+    </fragment>
+
+    <!-- 18 · הפרופיל שלי -->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.smartcart.app.ui.profile.ProfileFragment"
+        tools:layout="@layout/fragment_profile">
+        <action
+            android:id="@+id/action_profile_to_signIn"
+            app:destination="@id/signInFragment"
+            app:popUpTo="@id/nav_graph"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+</navigation>

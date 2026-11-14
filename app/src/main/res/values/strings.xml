@@ -1,0 +1,29 @@
+<resources>
+    <string name="app_name">SmartCart</string>
+    <string name="skeleton_note">שלד המסך. התוכן ייבנה במשימות הבאות.</string>
+    <string name="btn_sign_in_to_home">התחברי</string>
+    <string name="btn_sign_in_to_create_account">צרי חשבון</string>
+    <string name="btn_sign_in_to_reset_password">שכחת סיסמה?</string>
+    <string name="btn_sign_in_to_verify_email">אימות מייל</string>
+    <string name="btn_create_account_to_verify_email">צרי חשבון</string>
+    <string name="btn_verify_email_to_home">אימתתי, המשך</string>
+    <string name="btn_home_to_new_list">+ רשימה חדשה</string>
+    <string name="btn_home_to_my_lists">הרשימות שלי</string>
+    <string name="btn_home_to_list_editor">רשימה אחרונה</string>
+    <string name="btn_home_to_shared_lists">רשימות משותפות</string>
+    <string name="btn_home_to_profile">הפרופיל שלי</string>
+    <string name="btn_new_list_to_list_editor">צרי רשימה</string>
+    <string name="btn_list_editor_to_add_products">+ הוסיפי פריט</string>
+    <string name="btn_list_editor_to_share_list">שיתוף</string>
+    <string name="btn_list_editor_to_members">משתתפות</string>
+    <string name="btn_list_editor_to_comparison_type">השווי בין רשתות</string>
+    <string name="btn_my_lists_to_list_editor">פתיחת רשימה</string>
+    <string name="btn_comparison_type_to_comparing">התחילי השוואה</string>
+    <string name="btn_comparing_to_results">הצגת התוצאות</string>
+    <string name="btn_results_to_chain_breakdown">פירוט לפי רשת</string>
+    <string name="btn_join_list_to_list_editor">הצטרפי לרשימה</string>
+    <string name="btn_shared_lists_to_list_editor">פתיחת רשימה</string>
+    <string name="btn_shared_lists_to_join_list">הצטרפות דרך קישור</string>
+    <string name="btn_members_to_share_list">+ הזמיני משתתפת</string>
+    <string name="btn_profile_to_sign_in">התנתקות</string>
+</resources>

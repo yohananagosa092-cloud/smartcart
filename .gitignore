@@ -30,3 +30,7 @@ serviceAccount*.json
 # OS
 .DS_Store
 Thumbs.db
+
+# Native builds
+.externalNativeBuild/
+.cxx/
