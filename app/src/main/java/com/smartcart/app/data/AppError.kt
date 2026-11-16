@@ -20,6 +20,17 @@ enum class ErrorCode {
     NOT_SIGNED_IN,
     INVALID_NAME,
     INVALID_QUANTITY,
+    INVALID_EMAIL,
+
+    // שגיאות של Firebase Authentication (משימה 12)
+    /** כתובת או סיסמה שגויות. ההודעה כללית ולא מפרטת מה מהשניים שגוי (מסך 01). */
+    WRONG_CREDENTIALS,
+    /** סיסמה קצרה מ-8 תווים. */
+    WEAK_PASSWORD,
+    EMAIL_IN_USE,
+    /** Firebase חוסם זמנית אחרי ניסיונות כושלים רבים. */
+    TOO_MANY_ATTEMPTS,
+    NETWORK_ERROR,
 }
 
 /** שגיאה עם קוד מתוך [ErrorCode]. */
