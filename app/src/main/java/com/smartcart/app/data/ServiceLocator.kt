@@ -1,5 +1,7 @@
 package com.smartcart.app.data
 
+import com.smartcart.app.data.auth.AuthRepository
+import com.smartcart.app.data.auth.FirebaseAuthService
 import com.smartcart.app.data.repository.ComparisonRepository
 import com.smartcart.app.data.repository.ItemRepository
 import com.smartcart.app.data.repository.ListRepository
@@ -16,6 +18,9 @@ import com.smartcart.app.data.source.FakeDataSource
 object ServiceLocator {
 
     private val dataSource: DataSource by lazy { FakeDataSource() }
+
+    /** האימות כבר עובד מול Firebase Authentication של הפרויקט (משימה 12). */
+    val authRepository by lazy { AuthRepository(FirebaseAuthService()) }
 
     val userRepository by lazy { UserRepository(dataSource) }
     val listRepository by lazy { ListRepository(dataSource) }
