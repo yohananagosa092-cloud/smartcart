@@ -16,7 +16,6 @@
 | Cloud Firestore | מסד `(default)`, מהדורה STANDARD, מיקום `europe-west1` |
 | Cloud Functions | אזור `europe-west1` (זהה למיקום Firestore), Node.js 24, TypeScript |
 | Authentication | יש להפעיל את ספק Email/Password במסוף |
-| Cloud Messaging (FCM) | זמין אוטומטית לאחר רישום אפליקציית האנדרואיד |
 | תוכנית Blaze | נדרשת לפריסת פונקציות ולפונקציות מתוזמנות |
 | התראת תקציב | יש להגדיר ב-Google Cloud Billing |
 
