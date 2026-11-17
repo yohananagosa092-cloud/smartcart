@@ -144,10 +144,11 @@ export interface PriceSnapshotEntry {
 export type ComparisonStatus = "PENDING" | "RUNNING" | "DONE" | "FAILED";
 
 /**
- * Progress step shown on screen 13:
- * 0 created, 1 list read, 2 prices fetched, 3 chain totals, 4 result saved.
+ * Progress step shown on screen 12 (spec §14.2: DONE has step 5):
+ * 0 created, 1 reading list, 2 fetching prices, 3 computing chain totals,
+ * 4 saving result, 5 done.
  */
-export type ComparisonStep = 0 | 1 | 2 | 3 | 4;
+export type ComparisonStep = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type ComparisonMode = "LIST" | "BUDGET";
 
@@ -176,7 +177,8 @@ export interface ComparisonResult {
   missingItems: MissingItem[];
   totals: Partial<Record<ChainId, number>>;
   cheapestChain: ChainId;
-  budgetLeft: number | null; // set when mode is BUDGET
+  /** Per chain: budget - total (negative = over budget). null when mode is LIST. */
+  budgetLeft: Partial<Record<ChainId, number>> | null;
   breakdown: Partial<Record<ChainId, ChainBreakdown>>;
   pricesUpdatedAt: Partial<Record<ChainId, Timestamp>>;
 }

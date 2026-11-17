@@ -152,7 +152,7 @@ ingestionRuns/{runId}
 | `mode` | `LIST` \| `BUDGET` | |
 | `budget` | number \| null | חובה כאשר `mode = BUDGET` |
 | `status` | `PENDING` \| `RUNNING` \| `DONE` \| `FAILED` | |
-| `step` | number 0–4 | 0 נוצר · 1 קריאת הרשימה · 2 שליפת המחירים · 3 עלות בכל רשת · 4 שמירת התוצאה (מסך 13) |
+| `step` | number 0–5 | 0 נוצר · 1 קריאת הרשימה · 2 שליפת המחירים · 3 חישוב עלות בכל רשת · 4 שמירת התוצאה · 5 הושלם (מסך 12; בדוגמה בסעיף 14.2 באפיון DONE הוא step 5) |
 | `result` | map \| null | ראו למטה |
 | `error` | string \| null | קוד שגיאה כאשר `FAILED` (*תוספת למסמך האפיון*) |
 | `computeTimeMs` | number \| null | מדד הצלחה: עד 10 שניות ל-50 פריטים |
@@ -168,7 +168,7 @@ ingestionRuns/{runId}
   ],
   "totals": { "ramiLevy": 234.50, "chatziHinam": 251.70 },
   "cheapestChain": "ramiLevy",
-  "budgetLeft": 15.50,                          // רק כאשר mode = BUDGET, אחרת null
+  "budgetLeft": { "ramiLevy": 15.50, "chatziHinam": -1.70 },   // לכל רשת: תקציב פחות עלות הסל (שלילי = חריגה); null כאשר mode = LIST
   "breakdown": {                                // תוספת למסמך האפיון, עבור מסכים 11 ו-16
     "ramiLevy": { "items": [ /* PricedItem */ ], "total": 234.50 }
   },
