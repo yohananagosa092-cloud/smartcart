@@ -20,13 +20,12 @@ export const COLLECTIONS = {
   shoppingLists: "shoppingLists",
   items: "items",
   members: "members",
-  invitations: "invitations",
+  inviteLinks: "inviteLinks",
   products: "products",
   chains: "chains",
   snapshot: "snapshot",
   comparisons: "comparisons",
   ingestionRuns: "ingestionRuns",
-  mail: "mail",
 } as const;
 
 export const LIMITS = {
@@ -38,15 +37,8 @@ export const LIMITS = {
   quantityMax: 999,
   budgetMin: 1,
   budgetMax: 10000,
-  invitationTtlDays: 7,
   searchMinChars: 2,
   searchMaxResults: 20,
-} as const;
-
-/** Split-basket recommendation thresholds in ₪ (spec §3.4). */
-export const RECOMMENDATION_THRESHOLDS = {
-  recommendedMin: 15,
-  neutralMin: 5,
 } as const;
 
 // ---------- users/{uid} ----------
@@ -55,7 +47,6 @@ export interface UserDoc {
   email: string; // lower-case
   displayName: string;
   createdAt: Timestamp;
-  fcmTokens: string[];
   comparisonCount: number; // written by compareBasket only
 }
 
@@ -65,7 +56,8 @@ export interface ShoppingListDoc {
   name: string;
   ownerUid: string;
   memberUids: string[]; // includes ownerUid
-  budget: number | null; // whole ₪, 1–10,000
+  lastBudget: number | null; // whole ₪, 1–10,000; last budget used in a comparison
+  inviteToken: string | null; // token of the active inviteLinks doc
   itemCount: number; // written by onItemWritten
   createdAt: Timestamp;
   updatedAt: Timestamp;
@@ -77,11 +69,10 @@ export interface ShoppingListDoc {
 // ---------- shoppingLists/{listId}/items/{itemId} ----------
 
 export interface ItemDoc {
-  barcode: string | null; // null for a free-text item
+  barcode: string; // always present
   name: string;
   quantity: number; // integer 1–999
   note: string; // "" when empty
-  isFree: boolean;
   addedBy: string; // uid
   addedAt: Timestamp;
   updatedAt: Timestamp;
@@ -98,29 +89,22 @@ export interface MemberDoc {
   joinedAt: Timestamp;
 }
 
-// ---------- invitations/{id} ----------
+// ---------- inviteLinks/{token} ----------
 
-export type InvitationStatus = "PENDING" | "ACCEPTED" | "DECLINED" | "CANCELLED";
-
-export interface InvitationDoc {
+export interface InviteLinkDoc {
   listId: string;
-  listName: string;
+  listName: string; // copy: the invitee cannot read the list yet
+  ownerName: string;
   itemCount: number;
   memberNames: string[];
-  inviterUid: string;
-  inviterName: string;
-  inviteeEmail: string; // lower-case
-  status: InvitationStatus;
   createdAt: Timestamp;
-  expiresAt: Timestamp; // createdAt (or last resend) + 7 days
+  active: boolean;
 }
 
 // ---------- products/{barcode} ----------
 
 export interface ChainPrice {
-  price: number; // regular unit price, ₪
-  promoPrice: number | null;
-  promoUntil: Timestamp | null;
+  price: number; // unit price, ₪
   updatedAt: Timestamp;
 }
 
@@ -153,8 +137,6 @@ export interface ChainSnapshotDoc {
 
 export interface PriceSnapshotEntry {
   price: number;
-  promoPrice: number | null;
-  promoUntil: string | null; // ISO date
 }
 
 // ---------- comparisons/{id} ----------
@@ -163,12 +145,11 @@ export type ComparisonStatus = "PENDING" | "RUNNING" | "DONE" | "FAILED";
 
 /**
  * Progress step shown on screen 13:
- * 0 created, 1 list read, 2 prices fetched, 3 chain totals,
- * 4 split basket, 5 result saved.
+ * 0 created, 1 list read, 2 prices fetched, 3 chain totals, 4 result saved.
  */
-export type ComparisonStep = 0 | 1 | 2 | 3 | 4 | 5;
+export type ComparisonStep = 0 | 1 | 2 | 3 | 4;
 
-export type Recommendation = "RECOMMENDED" | "NEUTRAL" | "SINGLE_CHAIN";
+export type ComparisonMode = "LIST" | "BUDGET";
 
 export interface MissingItem {
   barcode: string;
@@ -181,22 +162,12 @@ export interface PricedItem {
   barcode: string;
   name: string;
   quantity: number;
-  unitPrice: number; // effective price (promo if valid)
-  regularPrice: number;
+  unitPrice: number;
   cost: number; // unitPrice × quantity
-}
-
-export interface SplitGroup {
-  chain: ChainId;
-  itemCount: number;
-  subtotal: number;
-  items: PricedItem[];
 }
 
 export interface ChainBreakdown {
   items: PricedItem[];
-  subtotalRegular: number;
-  promoDiscount: number;
   total: number;
 }
 
@@ -205,12 +176,7 @@ export interface ComparisonResult {
   missingItems: MissingItem[];
   totals: Partial<Record<ChainId, number>>;
   cheapestChain: ChainId;
-  split: {
-    total: number;
-    diffFromCheapest: number;
-    recommendation: Recommendation;
-    groups: SplitGroup[];
-  };
+  budgetLeft: number | null; // set when mode is BUDGET
   breakdown: Partial<Record<ChainId, ChainBreakdown>>;
   pricesUpdatedAt: Partial<Record<ChainId, Timestamp>>;
 }
@@ -218,7 +184,8 @@ export interface ComparisonResult {
 export interface ComparisonDoc {
   listId: string;
   requestedBy: string;
-  chains: ChainId[];
+  mode: ComparisonMode;
+  budget: number | null; // required when mode is BUDGET
   status: ComparisonStatus;
   step: ComparisonStep;
   result: ComparisonResult | null;
@@ -236,14 +203,4 @@ export interface IngestionRunDoc {
   status: RunStatus;
   itemCount: number;
   error: string | null;
-}
-
-// ---------- mail/{id} (Trigger Email extension) ----------
-
-export interface MailDoc {
-  to: string;
-  message: {
-    subject: string;
-    html: string;
-  };
 }
