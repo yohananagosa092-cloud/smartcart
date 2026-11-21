@@ -1,7 +1,13 @@
 import {Firestore, Timestamp} from "firebase-admin/firestore";
 import {ChainId} from "../models";
 import {ParseResult, parsePriceFull} from "./parsePriceFull";
+import {loadSnapshot} from "./snapshot";
 import {recordFailure, writeChain, WriteResult} from "./writeChain";
+
+/** Le nouveau fichier doit contenir au moins cette part des produits de la collecte précédente. */
+const MIN_SIZE_RATIO = 0.5;
+
+const stripZeros = (id: string): string => id.replace(/^0+/, "");
 
 /** Source des octets du fichier : le site de l'enseigne en production, un fichier local en test. */
 export type FileSource = () => Promise<Buffer>;
@@ -40,10 +46,23 @@ export async function ingestChain(
     const parse = chain.parse ?? parsePriceFull;
     const parsed = parse(await source());
     if (parsed.items.length === 0) throw new Error("EMPTY_PRICE_FILE");
+
+    // Garde-fou 1 : le fichier doit être celui du magasin de référence.
+    if (stripZeros(parsed.storeId) !== stripZeros(chain.referenceStoreId)) {
+      throw new Error("WRONG_STORE_IN_FILE");
+    }
+
+    // Garde-fou 2 : un fichier tronqué ferait supprimer à tort des milliers de prix.
+    // D'un jour à l'autre le fichier varie de quelques pour cent, jamais de moitié.
+    const previous = await loadSnapshot(db, chain.chainId);
+    if (previous && parsed.items.length < previous.prices.size * MIN_SIZE_RATIO) {
+      throw new Error("PRICE_FILE_TOO_SMALL");
+    }
+
     return await writeChain(db, chain.chainId, parsed.items, startedAt, {
       displayName: chain.displayName,
       referenceStoreId: chain.referenceStoreId,
-    });
+    }, previous);
   } catch (err) {
     const code = err instanceof Error ? err.message : String(err);
     await recordFailure(db, chain.chainId, startedAt, code);
