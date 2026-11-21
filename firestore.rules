@@ -1,0 +1,198 @@
+rules_version = '2';
+
+// Règles de sécurité Firestore (tâche 28).
+// Source : cahier des charges 3.1 et 14.4, et docs/data-model.md.
+//
+// Principe : tout ce qui n'est pas autorisé explicitement ici est refusé.
+// Les fonctions cloud (Admin SDK) ne sont pas soumises à ces règles : ce sont elles
+// qui écrivent ce que l'application n'a pas le droit d'écrire (membres, compteurs,
+// prix, résultats de comparaison, journaux).
+//
+// Les règles ne filtrent pas les résultats : chaque requête de l'application doit
+// déjà contenir la condition qui garantit que tous les documents renvoyés sont
+// autorisés (ex. memberUids array-contains uid).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Fonctions utilitaires ----------
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    function listPath(listId) {
+      return /databases/$(database)/documents/shoppingLists/$(listId);
+    }
+
+    // Membre de la liste d'après memberUids (la propriétaire y figure toujours).
+    function isMember(listId) {
+      return signedIn() && request.auth.uid in get(listPath(listId)).data.memberUids;
+    }
+
+    // Champs modifiés par une écriture de type update.
+    function changedKeys() {
+      return request.resource.data.diff(resource.data).affectedKeys();
+    }
+
+    function validDisplayName(name) {
+      return name is string && name.size() >= 2 && name.size() <= 40;
+    }
+
+    function validListName(name) {
+      return name is string && name.size() >= 1 && name.size() <= 40;
+    }
+
+    function validQuantity(quantity) {
+      return quantity is int && quantity >= 1 && quantity <= 999;
+    }
+
+    // ---------- users/{uid} ----------
+    // La propriétaire du compte lit et écrit son document, sauf comparisonCount
+    // (écrit par compareBasket) et email (copie de l'adresse du compte : sinon une
+    // utilisatrice pourrait afficher l'adresse de quelqu'un d'autre aux membres).
+
+    match /users/{uid} {
+      allow read: if isSelf(uid);
+
+      allow create: if isSelf(uid)
+        && request.resource.data.keys().hasOnly(['email', 'displayName', 'createdAt', 'comparisonCount'])
+        && validDisplayName(request.resource.data.displayName)
+        && request.resource.data.get('comparisonCount', 0) == 0
+        && request.resource.data.email.lower() == request.auth.token.email.lower();
+
+      allow update: if isSelf(uid)
+        && !changedKeys().hasAny(['comparisonCount', 'email'])
+        && validDisplayName(request.resource.data.displayName);
+
+      // Suppression : uniquement par la fonction deleteAccount.
+    }
+
+    // ---------- shoppingLists/{listId} ----------
+
+    match /shoppingLists/{listId} {
+      allow get, list: if signedIn()
+        && (resource.data.ownerUid == request.auth.uid
+            || request.auth.uid in resource.data.memberUids);
+
+      // Création : la créatrice est la propriétaire et l'unique membre. Les compteurs
+      // et le lien d'invitation sont gérés par les fonctions, donc ils démarrent à vide.
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'name', 'ownerUid', 'memberUids', 'inviteToken', 'itemCount', 'createdAt',
+          'updatedAt', 'lastComparisonId', 'lastCheapestChain', 'lastCheapestTotal', 'lastBudget'])
+        && request.resource.data.ownerUid == request.auth.uid
+        && request.resource.data.memberUids == [request.auth.uid]
+        && validListName(request.resource.data.name)
+        && request.resource.data.get('itemCount', 0) == 0
+        && request.resource.data.get('inviteToken', null) == null;
+
+      // Seule la propriétaire change le nom. ownerUid et memberUids ne changent jamais
+      // depuis l'application (joinList, removeMember), et les compteurs non plus.
+      allow update: if signedIn()
+        && resource.data.ownerUid == request.auth.uid
+        && changedKeys().hasOnly(['name', 'updatedAt'])
+        && validListName(request.resource.data.name);
+
+      // Suppression : uniquement par la fonction deleteList.
+    }
+
+    // ---------- shoppingLists/{listId}/items/{itemId} ----------
+    // Les membres (propriétaire et éditrices) lisent et modifient les produits.
+
+    match /shoppingLists/{listId}/items/{itemId} {
+      allow read: if isMember(listId);
+
+      allow create: if isMember(listId)
+        && request.resource.data.keys().hasOnly(
+          ['barcode', 'name', 'quantity', 'note', 'addedBy', 'addedAt', 'updatedAt'])
+        && request.resource.data.barcode is string
+        && request.resource.data.barcode.matches('^[0-9]+$')
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.get('note', '') is string
+        && validQuantity(request.resource.data.quantity)
+        && request.resource.data.addedBy == request.auth.uid;
+
+      // Seuls la quantité et la note changent ; le produit lui-même ne change pas.
+      allow update: if isMember(listId)
+        && changedKeys().hasOnly(['quantity', 'note', 'updatedAt'])
+        && validQuantity(request.resource.data.quantity)
+        && request.resource.data.note is string;
+
+      allow delete: if isMember(listId);
+    }
+
+    // ---------- shoppingLists/{listId}/members/{uid} ----------
+    // Lecture pour les membres ; l'écriture se fait par onListCreated, joinList et
+    // removeMember.
+
+    match /shoppingLists/{listId}/members/{memberUid} {
+      allow read: if isMember(listId);
+    }
+
+    // ---------- inviteLinks/{token} ----------
+    // Lecture d'un seul document, à partir de son token (écran 15). Pas de requête
+    // sur la collection : on ne peut pas énumérer les liens.
+
+    match /inviteLinks/{token} {
+      allow get: if signedIn();
+    }
+
+    // ---------- products et chains ----------
+    // Lecture pour toute utilisatrice connectée ; écriture par ingestPrices seulement.
+    // Le sous-document chains/{id}/snapshot (photo des prix, interne à la collecte)
+    // n'est volontairement pas listé ici : l'application ne peut pas le lire.
+
+    match /products/{barcode} {
+      allow read: if signedIn();
+    }
+
+    match /chains/{chainId} {
+      allow read: if signedIn();
+    }
+
+    // ---------- comparisons/{id} ----------
+    // L'application crée la demande (PENDING, sans résultat) ; compareBasket la remplit.
+
+    match /comparisons/{id} {
+      allow read: if signedIn() && resource.data.requestedBy == request.auth.uid;
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'listId', 'requestedBy', 'mode', 'budget', 'status', 'step', 'result', 'error',
+          'computeTimeMs', 'createdAt'])
+        && request.resource.data.requestedBy == request.auth.uid
+        && request.resource.data.status == 'PENDING'
+        && request.resource.data.listId is string
+        && isMember(request.resource.data.listId)
+        && (
+          (request.resource.data.mode == 'LIST'
+            && request.resource.data.get('budget', null) == null)
+          || (request.resource.data.mode == 'BUDGET'
+            && request.resource.data.budget is int
+            && request.resource.data.budget >= 1
+            && request.resource.data.budget <= 10000)
+        )
+        && request.resource.data.get('step', 0) == 0
+        && request.resource.data.get('result', null) == null;
+    }
+
+    // ---------- ingestionRuns/{id} ----------
+    // Journal de la collecte des prix : ni lecture ni écriture depuis l'application
+    // (consultable dans la console Firebase).
+
+    match /ingestionRuns/{id} {
+      allow read, write: if false;
+    }
+
+    // Tout le reste est refusé.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
