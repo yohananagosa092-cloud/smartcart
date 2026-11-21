@@ -15,10 +15,22 @@
 |---|---|
 | Cloud Firestore | מסד `(default)`, מהדורה STANDARD, מיקום `europe-west1` |
 | Cloud Functions | אזור `europe-west1` (זהה למיקום Firestore), Node.js 24, TypeScript |
-| Authentication | יש להפעיל את ספק Email/Password במסוף |
+| Authentication | ספק Email/Password; הפעלה: Authentication ← Sign-in method (ראו הסעיף "התחברות" למטה) |
 | Hosting | מוגדר ב-`firebase.json` (תיקייה `hosting/`); משמש ל-App Links של קישורי ההזמנה `/join/{token}` דרך `/.well-known/assetlinks.json`. **נשאר להשלים:** טביעת SHA-256 של האפליקציה בקובץ `assetlinks.json` |
 | תוכנית Blaze | נדרשת לפריסת פונקציות ולפונקציות מתוזמנות |
 | התראת תקציב | יש להגדיר ב-Google Cloud Billing |
+
+## התחברות (Authentication)
+
+כדי ליצור רשימה צריך לדעת מי המשתמשת, כדי לשייך אליה את הרשימה (`ownerUid`, `memberUids`) ולהגביל גישה בכללי האבטחה. לכן האפליקציה דורשת התחברות עם **דוא״ל וסיסמה** (מסכי הרשמה והתחברות, תהליך 6.1 באפיון), וה-`uid` שנוצר הוא מזהה המסמך ב-`users/{uid}` וב-`ownerUid` של הרשימות.
+
+**הפעלה בפרויקט Firebase (נדרש בכל סביבה: dev ו-prod):**
+
+1. במסוף Firebase: **Authentication** ← **Get started** (אם עוד לא הופעל).
+2. **Sign-in method** ← **Email/Password** ← להפעיל (**Enable**) ← **Save**.
+3. פונקציות callable דורשות משתמשת מחוברת; בלי התחברות הן מחזירות `unauthenticated` (ראו `docs/api-spec.md`).
+
+לבדיקה מקומית האמולטור של Auth רץ על פורט 9099.
 
 ## אפליקציית האנדרואיד
 
