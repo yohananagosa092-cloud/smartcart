@@ -139,7 +139,10 @@ ingestionRuns/{runId}
 | שדה | טיפוס | הערות |
 |---|---|---|
 | `runId` | string | |
-| `priceMap` | string | JSON של `{ [barcode]: { price } }`. אם יתקרב ל-1 MiB, יפוצל ל-`latest_1`, `latest_2`... |
+| `priceMap` | string | JSON של `{ [barcode]: { price } }`. אם יתקרב ל-1 MiB, יפוצל ל-`latest_1`, `latest_2`... (כל חלק עד 700,000 בתים) |
+| `parts` | number | מספר המסמכים שמרכיבים את התמונה (`latest`, `latest_1`, ...). חסר = 1 (פורמט ישן) |
+
+חלקים `latest_1`, `latest_2`... מכילים רק `runId` ו-`priceMap`. אם התמונה אינה קריאה או שחלק חסר, הקליטה הבאה כותבת את כל המוצרים מחדש (ללא מחיקות).
 
 ## `comparisons/{comparisonId}`
 
