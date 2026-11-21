@@ -25,6 +25,14 @@ export const YOCHANANOF: ChainConfig = {
   download: portalSource("yohananof", "7290803800003", "017"),
 };
 
+export const OSHER_AD: ChainConfig = {
+  chainId: "osherAd",
+  displayName: "אושר עד",
+  chainCode: "7290103152017",
+  referenceStoreId: "026",
+  download: portalSource("osherad", "7290103152017", "026"),
+};
+
 /** Site public prices.shufersal.co.il, sans connexion. */
 export const SHUFERSAL: ChainConfig = {
   chainId: "shufersal",
