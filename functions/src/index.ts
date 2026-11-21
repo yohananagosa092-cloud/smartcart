@@ -4,7 +4,7 @@ import {onSchedule} from "firebase-functions/scheduler";
 import * as logger from "firebase-functions/logger";
 import {getApps, initializeApp} from "firebase-admin/app";
 import {getFirestore} from "firebase-admin/firestore";
-import {ingestRamiLevy} from "./ingest/ingestRamiLevy";
+import {runIngestion} from "./ingest/ingestPrices";
 
 // Même région que ta base Firestore
 setGlobalOptions({maxInstances: 10, region: "europe-west1"});
@@ -21,22 +21,28 @@ export const greet = onCall((request) => {
   return {message: `Bonjour ${name} !`};
 });
 
-// Tâche 16 : collecte quotidienne des prix de Rami Levy (06:00, heure de Jérusalem)
-export const ingestRamiLevyDaily = onSchedule(
+// Tâche 25 : collecte quotidienne des prix des cinq enseignes (06:00, heure de Jérusalem).
+// Remplace ingestRamiLevyDaily (tâche 16). Les enseignes sont traitées l'une après l'autre ;
+// une enseigne qui échoue n'arrête pas les autres. Le détail de chaque exécution est
+// dans la collection ingestionRuns (visible dans la console Firebase).
+export const ingestPrices = onSchedule(
   {
     schedule: "every day 06:00",
     timeZone: "Asia/Jerusalem",
-    timeoutSeconds: 540,
+    timeoutSeconds: 900,
     memory: "1GiB",
   },
   async () => {
     if (getApps().length === 0) initializeApp();
-    const result = await ingestRamiLevy(getFirestore());
-    logger.info("Rami Levy : collecte terminée", result);
+    const outcomes = await runIngestion(getFirestore());
+    for (const o of outcomes) {
+      if (o.ok) logger.info(`${o.chainId} : collecte terminée`, o.result);
+      else logger.error(`${o.chainId} : collecte échouée`, {error: o.error});
+    }
   }
 );
 
-// 3) Fonction planifiée : comme ingestPrices plus tard (tous les jours à 06:00)
+// 3) Fonction planifiée d'apprentissage (tâche 1), sans effet sur les données
 export const dailyCheck = onSchedule(
   {schedule: "every day 06:00", timeZone: "Asia/Jerusalem"},
   async () => {

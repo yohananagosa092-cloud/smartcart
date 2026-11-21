@@ -51,3 +51,6 @@ export const SHUFERSAL: ChainConfig = {
   referenceStoreId: "413",
   download: shufersalSource("7290027600007", "413"),
 };
+
+/** Les cinq enseignes, dans l'ordre de la collecte quotidienne (ingestPrices). */
+export const ALL_CHAINS: ChainConfig[] = [RAMI_LEVY, SHUFERSAL, YOCHANANOF, HATZI_HINAM, OSHER_AD];
