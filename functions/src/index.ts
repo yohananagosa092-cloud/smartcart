@@ -2,12 +2,17 @@ import {setGlobalOptions} from "firebase-functions";
 import {onRequest, onCall} from "firebase-functions/https";
 import {onSchedule} from "firebase-functions/scheduler";
 import * as logger from "firebase-functions/logger";
-import {getApps, initializeApp} from "firebase-admin/app";
-import {getFirestore} from "firebase-admin/firestore";
+import {adminDb} from "./admin";
 import {runIngestion} from "./ingest/ingestPrices";
 
 // Même région que ta base Firestore
 setGlobalOptions({maxInstances: 10, region: "europe-west1"});
+
+// Tâche 28 : déclencheurs Firestore.
+//  - onListCreated : crée l'entrée OWNER de la propriétaire dans members.
+//  - onItemWritten : tient à jour itemCount et updatedAt de la liste.
+export {onListCreated} from "./sharing/onListCreated";
+export {onItemWritten} from "./lists/onItemWritten";
 
 // 1) Fonction visible dans le navigateur (pour tester facilement)
 export const hello = onRequest((request, response) => {
@@ -33,8 +38,7 @@ export const ingestPrices = onSchedule(
     memory: "1GiB",
   },
   async () => {
-    if (getApps().length === 0) initializeApp();
-    const outcomes = await runIngestion(getFirestore());
+    const outcomes = await runIngestion(adminDb());
     for (const o of outcomes) {
       if (o.ok) logger.info(`${o.chainId} : collecte terminée`, o.result);
       else logger.error(`${o.chainId} : collecte échouée`, {error: o.error});
