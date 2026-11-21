@@ -15,3 +15,11 @@ export const RAMI_LEVY: ChainConfig = {
   referenceStoreId: "044",
   download: portalSource("RamiLevi", "7290058140886", "044"),
 };
+
+export const YOCHANANOF: ChainConfig = {
+  chainId: "yochananof",
+  displayName: "יוחננוף",
+  chainCode: "7290803800003",
+  referenceStoreId: "017",
+  download: portalSource("yohananof", "7290803800003", "017"),
+};
