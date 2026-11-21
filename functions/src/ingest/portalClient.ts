@@ -4,6 +4,8 @@
  *
  * Le nom d'utilisateur est le nom de l'enseigne et il n'y a pas de mot de passe.
  */
+import {pickLatestForStore} from "./priceFilename";
+
 const BASE = "https://url.publishedprices.co.il";
 
 export class PortalClient {
@@ -72,4 +74,23 @@ export class PortalClient {
     if (!res.ok) throw new Error(`PORTAL_DOWNLOAD_FAILED_${res.status}`);
     return Buffer.from(await res.arrayBuffer());
   }
+}
+
+/**
+ * Source de fichier pour une enseigne du portail : connexion, liste des PriceFull
+ * de l'enseigne, puis téléchargement du plus récent du magasin de référence.
+ */
+export function portalSource(
+  portalUser: string,
+  chainCode: string,
+  referenceStoreId: string,
+): () => Promise<Buffer> {
+  return async () => {
+    const client = new PortalClient(portalUser);
+    await client.login();
+    const names = await client.listFiles(`PriceFull${chainCode}`);
+    const latest = pickLatestForStore(names, chainCode, referenceStoreId);
+    if (!latest) throw new Error("NO_PRICEFULL_FOR_REFERENCE_STORE");
+    return client.download(latest);
+  };
 }
