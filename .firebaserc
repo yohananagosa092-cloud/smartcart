@@ -1,6 +1,7 @@
 {
   "projects": {
     "default": "smartcart-3410a",
-    "dev": "smartcart-3410a"
+    "dev": "smartcart-3410a",
+    "prod": "smartcart-prod-4b382"
   }
 }

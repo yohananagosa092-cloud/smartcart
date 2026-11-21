@@ -5,7 +5,7 @@
 | סביבה | כינוי ב-`.firebaserc` | מזהה פרויקט | מצב |
 |---|---|---|---|
 | dev | `dev` (וגם `default`) | `smartcart-3410a` | פעיל |
-| prod | `prod` | — | טרם נוצר; ייווצר לפני הפריסה ל-prod (משימה 73) |
+| prod | `prod` | `smartcart-prod-4b382` | נוצר (Spark); מעבר ל-Blaze לפני הפריסה ל-prod (משימה 73) |
 
 מעבר בין סביבות: `firebase use dev` או `firebase use prod`.
 
