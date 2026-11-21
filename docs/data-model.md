@@ -155,7 +155,7 @@ ingestionRuns/{runId}
 | `step` | number 0–5 | 0 נוצר · 1 קריאת הרשימה · 2 שליפת המחירים · 3 חישוב עלות בכל רשת · 4 שמירת התוצאה · 5 הושלם (מסך 12; בדוגמה בסעיף 14.2 באפיון DONE הוא step 5) |
 | `result` | map \| null | ראו למטה |
 | `error` | string \| null | קוד שגיאה כאשר `FAILED` (*תוספת למסמך האפיון*) |
-| `computeTimeMs` | number \| null | מדד הצלחה: עד 10 שניות ל-50 פריטים |
+| `computeTimeMs` | number \| null | זמן החישוב באלפיות שנייה |
 | `createdAt` | Timestamp | |
 
 ### מבנה `result`
