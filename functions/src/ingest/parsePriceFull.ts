@@ -33,9 +33,12 @@ function field(block: string, tag: string): string {
   return m ? decode(m[1]) : "";
 }
 
-/** Valeurs de remplissage : « לא ידוע » (Rami Levy) et « Unknown » (Yochananof). */
+/**
+ * Valeurs de remplissage : « לא ידוע » (Rami Levy), « Unknown » (Yochananof)
+ * et « --- » (Shufersal).
+ */
 function isUnknown(text: string): boolean {
-  return text === "" || text === "לא ידוע" || text.toLowerCase() === "unknown";
+  return text === "" || text === "לא ידוע" || text === "---" || text.toLowerCase() === "unknown";
 }
 
 /** Accepte un Buffer .gz ou du XML déjà décompressé (string / Buffer). */

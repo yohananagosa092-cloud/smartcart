@@ -1,5 +1,6 @@
 import {ChainConfig} from "./ingestChain";
 import {portalSource} from "./portalClient";
+import {shufersalSource} from "./shufersalClient";
 
 /**
  * Configuration de chaque enseigne : identifiants et magasin de référence
@@ -22,4 +23,13 @@ export const YOCHANANOF: ChainConfig = {
   chainCode: "7290803800003",
   referenceStoreId: "017",
   download: portalSource("yohananof", "7290803800003", "017"),
+};
+
+/** Site public prices.shufersal.co.il, sans connexion. */
+export const SHUFERSAL: ChainConfig = {
+  chainId: "shufersal",
+  displayName: "שופרסל",
+  chainCode: "7290027600007",
+  referenceStoreId: "413",
+  download: shufersalSource("7290027600007", "413"),
 };
