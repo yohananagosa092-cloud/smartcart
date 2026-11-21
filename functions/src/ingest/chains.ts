@@ -1,3 +1,4 @@
+import {hatziHinamSource} from "./hatziHinamClient";
 import {ChainConfig} from "./ingestChain";
 import {portalSource} from "./portalClient";
 import {shufersalSource} from "./shufersalClient";
@@ -31,6 +32,15 @@ export const OSHER_AD: ChainConfig = {
   chainCode: "7290103152017",
   referenceStoreId: "026",
   download: portalSource("osherad", "7290103152017", "026"),
+};
+
+/** Site public shop.hazi-hinam.co.il, sans connexion. */
+export const HATZI_HINAM: ChainConfig = {
+  chainId: "chatziHinam",
+  displayName: "חצי חינם",
+  chainCode: "7290700100008",
+  referenceStoreId: "204",
+  download: hatziHinamSource("7290700100008", "204"),
 };
 
 /** Site public prices.shufersal.co.il, sans connexion. */
