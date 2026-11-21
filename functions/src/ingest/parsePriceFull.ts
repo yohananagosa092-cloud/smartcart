@@ -34,11 +34,13 @@ function field(block: string, tag: string): string {
 }
 
 /**
- * Valeurs de remplissage : « לא ידוע » (Rami Levy), « Unknown » (Yochananof)
- * et « --- » (Shufersal).
+ * Valeurs de remplissage au lieu d'un vrai fabricant : « לא ידוע » (Rami Levy),
+ * « Unknown » (Yochananof), « --- » et « כללי » (Shufersal).
  */
+const PLACEHOLDERS = new Set(["", "לא ידוע", "---", "כללי", "unknown"]);
+
 function isUnknown(text: string): boolean {
-  return text === "" || text === "לא ידוע" || text === "---" || text.toLowerCase() === "unknown";
+  return PLACEHOLDERS.has(text.toLowerCase());
 }
 
 /** Accepte un Buffer .gz ou du XML déjà décompressé (string / Buffer). */
