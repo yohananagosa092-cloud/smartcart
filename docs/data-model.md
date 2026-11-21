@@ -202,16 +202,17 @@ ingestionRuns/{runId}
 
 | אוסף | קריאה מהאפליקציה | כתיבה מהאפליקציה |
 |---|---|---|
-| `users/{uid}` | המשתמשת עצמה | המשתמשת עצמה, למעט `comparisonCount` |
-| `shoppingLists` | חברות ב-`memberUids` | יצירה; עדכון `name`, `budget` על ידי הבעלים בלבד |
-| `…/items` | חברות | חברות; `quantity` 1–999 |
-| `…/members` | חברות | אסורה |
-| `inviteLinks` | אסורה (נקרא דרך פונקציה) | אסורה |
+| `users/{uid}` | המשתמשת עצמה | המשתמשת עצמה, למעט `comparisonCount` ו-`email`; מחיקה רק בפונקציה |
+| `shoppingLists` | הבעלים או חברות ב-`memberUids` | יצירה (הבעלים הוא החבר היחיד, `itemCount` מתחיל ב-0); עדכון `name` בלבד על ידי הבעלים; מחיקה רק בפונקציה |
+| `…/items` | חברות | חברות; `quantity` מספר שלם 1–999; `addedBy` = המשתמשת; רק `quantity` ו-`note` ניתנים לשינוי |
+| `…/members` | חברות | אסורה (נכתב על ידי `onListCreated`, `joinList`, `removeMember`) |
+| `inviteLinks` | מסמך בודד לפי `token` (`get`), ללא שאילתות | אסורה |
 | `products`, `chains` | כל משתמשת מחוברת | אסורה |
-| `comparisons` | `requestedBy` | יצירה בלבד (`PENDING`, חברה ברשימה) |
+| `chains/{id}/snapshot` | אסורה (פנימי לקליטה) | אסורה |
+| `comparisons` | `requestedBy` | יצירה בלבד (`PENDING`, בלי תוצאה, חברה ברשימה, `budget` שלם 1–10,000 ב-`BUDGET`) |
 | `ingestionRuns` | אסורה | אסורה |
 
-הכללים עצמם ייכתבו במשימות 28 ו-60.
+הכללים נמצאים ב-[`firestore.rules`](../firestore.rules) (משימה 28). משימה 60 תעדכן אותם לשיתוף.
 
 ## אינדקסים
 
