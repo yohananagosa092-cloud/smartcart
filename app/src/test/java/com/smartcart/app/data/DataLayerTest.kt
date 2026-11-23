@@ -12,7 +12,13 @@ import com.smartcart.app.data.repository.ProductRepository
 import com.smartcart.app.data.repository.SharingRepository
 import com.smartcart.app.data.repository.UserRepository
 import com.smartcart.app.data.source.FakeDataSource
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
+import kotlinx.coroutines.yield
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -98,6 +104,27 @@ class DataLayerTest {
         assertEquals(list.id, sharing.joinList(token).getOrThrow())
         assertEquals(ErrorCode.ALREADY_MEMBER, errorOf(sharing.joinList(token)))
         assertEquals(listOf(Role.OWNER, Role.EDITOR), sharing.members(list.id).getOrThrow().map { it.role })
+    }
+
+    @Test
+    fun listenersReceiveEveryChange() = runBlocking {
+        val list = lists.createList("קניות").getOrThrow()
+        val milk = product("חלב")
+
+        withTimeout(5_000) {
+            // מתחילים להאזין לפריטים, כמו מסך 08
+            val updates = async(start = CoroutineStart.UNDISPATCHED) {
+                items.observeItems(list.id).take(3).toList()
+            }
+            items.addProduct(list.id, milk).getOrThrow() // עדכון ראשון: חלב, כמות 1
+            yield()
+            items.addProduct(list.id, milk).getOrThrow() // עדכון שני: חלב, כמות 2
+            yield()
+
+            val seen = updates.await()
+            assertEquals(listOf(0, 1, 1), seen.map { it.size }) // רשימה ריקה, ואז פריט אחד
+            assertEquals(listOf(1, 2), seen.drop(1).map { it.single().quantity })
+        }
     }
 
     @Test
