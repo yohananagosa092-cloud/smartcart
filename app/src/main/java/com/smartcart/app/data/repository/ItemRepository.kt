@@ -7,11 +7,18 @@ import com.smartcart.app.data.model.Product
 import com.smartcart.app.data.safeCall
 import com.smartcart.app.data.source.DataSource
 import com.smartcart.app.data.source.requireUid
+import kotlinx.coroutines.flow.Flow
 
 /** הפריטים ברשימה (מסכים 07, 08). */
 class ItemRepository(private val dataSource: DataSource) {
 
     suspend fun items(listId: String): Result<List<ListItem>> = safeCall { dataSource.getItems(listId) }
+
+    /**
+     * משימה 21: הפריטים ברשימה, ואחר כך רשימה מעודכנת בכל שינוי, גם כשמשתתפת אחרת משנה.
+     * מסך 08 מאזין לזה ומתעדכן לבד. שגיאה (למשל אין הרשאה) מגיעה דרך ה-Flow עצמו.
+     */
+    fun observeItems(listId: String): Flow<List<ListItem>> = dataSource.observeItems(listId)
 
     /**
      * לחיצה על + במסך 07: מוסיפה את המוצר בכמות 1,

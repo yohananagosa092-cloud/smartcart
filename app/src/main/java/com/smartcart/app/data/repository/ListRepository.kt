@@ -6,6 +6,7 @@ import com.smartcart.app.data.model.ShoppingList
 import com.smartcart.app.data.safeCall
 import com.smartcart.app.data.source.DataSource
 import com.smartcart.app.data.source.requireUid
+import kotlinx.coroutines.flow.Flow
 
 /** רשימות הקניות (מסכים 05, 06, 08, 09, 16). */
 class ListRepository(private val dataSource: DataSource) {
@@ -21,6 +22,9 @@ class ListRepository(private val dataSource: DataSource) {
     }
 
     suspend fun getList(listId: String): Result<ShoppingList?> = safeCall { dataSource.getList(listId) }
+
+    /** משימה 21: הרשימה, ואחר כך גרסה חדשה בכל שינוי (למשל שם חדש). מסך 08 מאזין לזה. */
+    fun observeList(listId: String): Flow<ShoppingList?> = dataSource.observeList(listId)
 
     /** יצירת רשימה חדשה (מסך 06). */
     suspend fun createList(name: String): Result<ShoppingList> = safeCall {

@@ -13,6 +13,9 @@ import com.google.firebase.firestore.firestore
 import com.smartcart.app.data.model.ChainId
 import com.smartcart.app.data.model.ListItem
 import com.smartcart.app.data.model.ShoppingList
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 
 /**
@@ -33,14 +36,17 @@ class FirestoreDataSource(
 
     // ---------- שלב 2: קריאת רשימות ----------
 
-    /** כל הרשימות שהמשתמשת משתתפת בהן, מהחדשה לישנה (מסכים 05, 16). */
+    /**
+     * כל הרשימות שהמשתמשת משתתפת בהן, מהחדשה לישנה (מסכים 05, 16).
+     * האפליקציה "שואלת" את Firebase פעם אחת ומקבלת תשובה אחת.
+     */
     override suspend fun getListsForMember(uid: String): List<ShoppingList> =
-        lists.whereArrayContains("memberUids", uid)
-            .orderBy("updatedAt", Query.Direction.DESCENDING)
-            .get()
-            .await()
+        lists.whereArrayContains("memberUids", uid)                 // רק רשימות שהמזהה שלי ברשימת המשתתפות שלהן
+            .orderBy("updatedAt", Query.Direction.DESCENDING)        // מסדרים מהרשימה שעודכנה אחרונה
+            .get()                                                   // שולחים את הבקשה ל-Firebase
+            .await()                                                 // מחכים לתשובה ברקע, בלי שהמסך ייתקע
             .documents
-            .mapNotNull { it.toShoppingList() }
+            .mapNotNull { it.toShoppingList() }                      // כל דף שחזר הופך לאובייקט ShoppingList
 
     /** הרשימות שהמשתמשת יצרה, מהחדשה לישנה (מסך 09). */
     override suspend fun getListsOwnedBy(uid: String): List<ShoppingList> =
@@ -59,25 +65,25 @@ class FirestoreDataSource(
 
     /** יצירת רשימה חדשה (מסך 06). בעלת הרשימה היא גם המשתתפת הראשונה. */
     override suspend fun createList(name: String, ownerUid: String): ShoppingList {
-        val doc = lists.document() // דף חדש עם מזהה אקראי
-        doc.set(
+        val doc = lists.document() // 1. דף חדש בתיקייה shoppingLists, עם מזהה אקראי
+        doc.set( // 2. כותבים בדף את פרטי הרשימה
             mapOf(
                 "name" to name,
-                "ownerUid" to ownerUid,
-                "memberUids" to listOf(ownerUid),
+                "ownerUid" to ownerUid,                       // מי יצרה
+                "memberUids" to listOf(ownerUid),             // מי משתתפת (בהתחלה רק היא)
                 "inviteToken" to null,
                 "itemCount" to 0,
-                "createdAt" to FieldValue.serverTimestamp(),
+                "createdAt" to FieldValue.serverTimestamp(),  // השעה של השרת, אותה שעה לכל הטלפונים
                 "updatedAt" to FieldValue.serverTimestamp(),
                 "lastComparisonId" to null,
                 "lastCheapestChain" to null,
                 "lastCheapestTotal" to null,
                 "lastBudget" to null,
             ),
-        ).logIfFailed("createList")
+        ).logIfFailed("createList") // 3. לא מחכים לשרת: נשמר בטלפון מיד, נשלח כשיש אינטרנט
 
         val now = System.currentTimeMillis()
-        return ShoppingList(
+        return ShoppingList( // 4. מחזירים למסך את הרשימה החדשה
             id = doc.id,
             name = name,
             ownerUid = ownerUid,
@@ -140,6 +146,37 @@ class FirestoreDataSource(
     /** מחיקת פריט מהרשימה (מסך 08). */
     override suspend fun deleteItem(listId: String, itemId: String) {
         items(listId).document(itemId).delete().logIfFailed("deleteItem")
+    }
+
+    // ---------- משימה 21: סנכרון בזמן אמת ----------
+    // משימה 18 "שואלת" את Firebase ומקבלת תשובה פעם אחת (כמו להתקשר ולשאול).
+    // משימה 21 "מאזינה": Firebase שולח את המצב עכשיו, ושוב בכל פעם שמישהי משנה משהו,
+    // גם מטלפון אחר (כמו קבוצת וואטסאפ: כל הודעה חדשה מגיעה לבד).
+
+    /** מאזינה לרשימה עצמה, למשל לשינוי שם. */
+    override fun observeList(listId: String): Flow<ShoppingList?> = callbackFlow { // 1. "צינור" (Flow) שעדכונים זורמים בו
+        val registration = lists.document(listId)
+            .addSnapshotListener { snapshot, error -> // 2. "תודיעי לי על כל שינוי בדף של הרשימה"
+                if (error != null) {
+                    close(error) // שגיאה (למשל אין הרשאה) סוגרת את הצינור, והמסך מקבל אותה
+                    return@addSnapshotListener
+                }
+                trySend(snapshot?.toShoppingList()) // 3. כל עדכון נשלח לצינור
+            }
+        awaitClose { registration.remove() } // 4. כשהמסך נסגר מפסיקים להאזין, כדי לא לבזבז סוללה
+    }
+
+    /** מאזינה לפריטים: כל הוספה, שינוי כמות או מחיקה שולחים את רשימת הפריטים המעודכנת. */
+    override fun observeItems(listId: String): Flow<List<ListItem>> = callbackFlow { // 1. "צינור" של עדכונים
+        val registration = items(listId).orderBy("addedAt")
+            .addSnapshotListener { snapshot, error -> // 2. "תודיעי לי על כל שינוי בתיקיית הפריטים"
+                if (error != null) {
+                    close(error)
+                    return@addSnapshotListener
+                }
+                trySend(snapshot?.documents?.mapNotNull { it.toListItem() }.orEmpty()) // 3. הרשימה החדשה נשלחת לצינור
+            }
+        awaitClose { registration.remove() } // 4. כשהמסך נסגר מפסיקים להאזין
     }
 
     /**
