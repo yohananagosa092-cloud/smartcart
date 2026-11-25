@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="sc_space_4">4dp</dimen>
+    <dimen name="sc_space_8">8dp</dimen>
+    <dimen name="sc_space_12">12dp</dimen>
+    <dimen name="sc_space_16">16dp</dimen>
+    <dimen name="sc_space_20">20dp</dimen>
+    <dimen name="sc_space_24">24dp</dimen>
+    <dimen name="sc_space_32">32dp</dimen>
+    <dimen name="sc_space_48">48dp</dimen>
+    <dimen name="sc_button_radius">12dp</dimen>
+    <dimen name="sc_card_radius">14dp</dimen>
+    <dimen name="sc_card_padding">12dp</dimen>
+    <dimen name="sc_avatar_size">28dp</dimen>
+    <dimen name="sc_touch_target">48dp</dimen>
+</resources>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.SmartCart.DesignSystem" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/sc_mint_primary</item>
+        <item name="colorOnPrimary">@color/sc_on_accent</item>
+        <item name="colorPrimaryContainer">@color/sc_mint_soft</item>
+        <item name="colorOnPrimaryContainer">@color/sc_mint_primary</item>
+        <item name="colorSecondary">@color/sc_sun_accent</item>
+        <item name="colorOnSecondary">@color/sc_on_accent</item>
+        <item name="colorSecondaryContainer">@color/sc_sun_soft</item>
+        <item name="colorOnSecondaryContainer">@color/sc_sun_accent</item>
+        <item name="colorError">@color/sc_warn_coral</item>
+        <item name="colorOnError">@color/sc_on_accent</item>
+        <item name="colorSurface">@color/sc_surface</item>
+        <item name="colorOnSurface">@color/sc_ink</item>
+        <item name="colorOnSurfaceVariant">@color/sc_ink_soft</item>
+        <item name="colorOutline">@color/sc_line</item>
+        <item name="android:colorBackground">@color/sc_bg</item>
+        <item name="android:windowBackground">@color/sc_bg</item>
+        <item name="android:textColorPrimary">@color/sc_ink</item>
+        <item name="android:textColorSecondary">@color/sc_ink_soft</item>
+        <item name="android:fontFamily">@font/sc_rubik_regular</item>
+        <item name="fontFamily">@font/sc_rubik_regular</item>
+        <item name="materialButtonStyle">@style/Widget.SmartCart.Button.Primary</item>
+        <item name="materialCardViewStyle">@style/Widget.SmartCart.Card</item>
+        <item name="textInputStyle">@style/Widget.SmartCart.Input</item>
+        <item name="chipStyle">@style/Widget.SmartCart.Chip</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.SmartCart.Headline</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.SmartCart.Body</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.SmartCart.Caption</item>
+    </style>
+</resources>

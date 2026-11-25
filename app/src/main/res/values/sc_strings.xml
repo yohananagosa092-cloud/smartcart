@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="sc_preview_title">מערכת העיצוב של SmartCart</string>
+    <string name="sc_primary">יצירת רשימה</string>
+    <string name="sc_secondary">ביטול</string>
+    <string name="sc_card_title">הקניות לשבוע</string>
+    <string name="sc_card_subtitle">12 פריטים · עודכנה היום</string>
+    <string name="sc_chip_all">כל המוצרים</string>
+    <string name="sc_chip_dairy">מוצרי חלב</string>
+    <string name="sc_status_success">בתוך התקציב</string>
+    <string name="sc_status_accent">סל מפוצל</string>
+    <string name="sc_status_warning">חריגה מהתקציב</string>
+    <string name="sc_input_label">שם הרשימה</string>
+    <string name="sc_input_hint">לדוגמה: קניות לשבת</string>
+    <string name="sc_increase_quantity">הגדלת כמות</string>
+    <string name="sc_decrease_quantity">הקטנת כמות</string>
+    <string name="sc_initials">אנ</string>
+</resources>

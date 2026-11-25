@@ -1,0 +1,1 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/sc_avatar_initials" style="@style/Widget.SmartCart.Avatar" android:layout_width="@dimen/sc_avatar_size" android:layout_height="@dimen/sc_avatar_size" />
