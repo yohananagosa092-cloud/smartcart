@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="sc_mint_primary">#21735D</color>
+    <color name="sc_mint_soft">#D7EFE5</color>
+    <color name="sc_sun_accent">#A9530E</color>
+    <color name="sc_sun_soft">#FDE9D7</color>
+    <color name="sc_warn_coral">#B8452A</color>
+    <color name="sc_ink">#0F2A24</color>
+    <color name="sc_ink_soft">#51635F</color>
+    <color name="sc_ink_faint">#677672</color>
+    <color name="sc_bg">#FAFBFA</color>
+    <color name="sc_line">#E4E8E7</color>
+    <color name="sc_surface">#FFFFFF</color>
+    <color name="sc_on_accent">#FFFFFF</color>
+</resources>
