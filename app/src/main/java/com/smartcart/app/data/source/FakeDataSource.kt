@@ -17,6 +17,11 @@ import com.smartcart.app.data.model.Role
 import com.smartcart.app.data.model.ShoppingList
 import com.smartcart.app.data.model.User
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 import java.util.UUID
 
 /**
@@ -91,6 +96,7 @@ class FakeDataSource(
         network()
         val list = requireOwnedList(listId)
         lists[listId] = list.copy(name = name, updatedAt = now())
+        notifyChanged()
     }
 
     // ---------- items ----------
@@ -121,6 +127,22 @@ class FakeDataSource(
         requireMember(listId)
         if (items[listId]?.remove(itemId) != null) onItemWritten(listId)
     }
+
+    // ---------- משימה 21: סנכרון בזמן אמת ----------
+
+    /**
+     * מונה שינויים: כל כתיבה מגדילה אותו (notifyChanged), וכל מי שמאזין מקבל את המצב החדש.
+     * כך נתוני הדמה מתנהגים כמו Firestore, שמודיע על כל שינוי.
+     */
+    private val changes = MutableStateFlow(0)
+
+    private fun notifyChanged() = changes.update { it + 1 }
+
+    override fun observeList(listId: String): Flow<ShoppingList?> =
+        changes.map { lists[listId] }.distinctUntilChanged() // שולחים רק כשהרשימה באמת השתנתה
+
+    override fun observeItems(listId: String): Flow<List<ListItem>> =
+        changes.map { items[listId]?.values?.sortedBy { it.addedAt }.orEmpty() }.distinctUntilChanged()
 
     // ---------- members ----------
 
@@ -198,7 +220,7 @@ class FakeDataSource(
         comparisons[comparisonId] = comparison.copy(status = ComparisonStatus.RUNNING, step = 1)
         network()
 
-        val listItems = items[listId]?.values?.toList().orEmpty()
+        val listItems = items[listId]?.values.orEmpty().filter { it.barcode.isNotBlank() }
         if (listItems.isEmpty()) failComparison(comparisonId, ErrorCode.LIST_EMPTY)
         if (comparison.mode == ComparisonMode.BUDGET && (comparison.budget ?: 0) !in 1..10_000) {
             failComparison(comparisonId, ErrorCode.INVALID_BUDGET)
@@ -221,6 +243,7 @@ class FakeDataSource(
             )
         }
         users[uid]?.let { users[uid] = it.copy(comparisonCount = it.comparisonCount + 1) }
+        notifyChanged()
         return ComparisonStatus.DONE
     }
 
@@ -243,6 +266,7 @@ class FakeDataSource(
             active = true,
         )
         lists[listId] = list.copy(inviteToken = token)
+        notifyChanged()
         return FakeData.INVITE_BASE_URL + token
     }
 
@@ -264,6 +288,7 @@ class FakeDataSource(
             joinedAt = now(),
         )
         lists[list.id] = list.copy(memberUids = list.memberUids + uid)
+        notifyChanged()
         inviteLinks[token] = link.copy(memberNames = link.memberNames + user?.displayName.orEmpty())
         return list.id
     }
@@ -275,6 +300,7 @@ class FakeDataSource(
             inviteLinks[token]?.let { inviteLinks[token] = it.copy(active = false) }
         }
         lists[listId] = list.copy(inviteToken = null)
+        notifyChanged()
         return true
     }
 
@@ -285,6 +311,7 @@ class FakeDataSource(
         if (memberUid !in list.memberUids) throw AppException(ErrorCode.MEMBER_NOT_FOUND)
         members[listId]?.remove(memberUid)
         lists[listId] = list.copy(memberUids = list.memberUids - memberUid)
+        notifyChanged()
         return true
     }
 
@@ -306,6 +333,7 @@ class FakeDataSource(
         }
         users.remove(uid)
         signedInUid = null
+        notifyChanged()
         return true
     }
 
@@ -350,6 +378,7 @@ class FakeDataSource(
         lists[list.id] = list
         items[list.id] = mutableMapOf()
         onListCreated(list)
+        notifyChanged()
         return list
     }
 
@@ -365,6 +394,7 @@ class FakeDataSource(
         items.remove(list.id)
         members.remove(list.id)
         list.inviteToken?.let { inviteLinks.remove(it) }
+        notifyChanged()
     }
 
     /** מחקה את הטריגר onListCreated: בעלת הרשימה נרשמת כמשתתפת בתפקיד OWNER. */
@@ -385,6 +415,7 @@ class FakeDataSource(
     private fun onItemWritten(listId: String) {
         val list = lists[listId] ?: return
         lists[listId] = list.copy(itemCount = items[listId]?.size ?: 0, updatedAt = now())
+        notifyChanged()
     }
 
     private fun failComparison(comparisonId: String, code: ErrorCode): Nothing {

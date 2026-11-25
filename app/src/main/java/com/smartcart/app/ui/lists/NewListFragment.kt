@@ -2,26 +2,36 @@ package com.smartcart.app.ui.lists
 
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
+import android.widget.EditText
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.smartcart.app.R
-import com.smartcart.app.viewmodel.lists.NewListViewModel
+import com.smartcart.app.data.ServiceLocator
+import kotlinx.coroutines.launch
 
-/** מסך 06 · רשימה חדשה. שלד: הכותרת מגיעה מה-ViewModel, והכפתורים מנווטים לפי גרף הניווט. */
 class NewListFragment : Fragment(R.layout.fragment_new_list) {
-
-    private val viewModel: NewListViewModel by viewModels()
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val title = view.findViewById<TextView>(R.id.screen_title)
-        viewModel.title.observe(viewLifecycleOwner) { title.text = it }
-
-        view.findViewById<View>(R.id.btn_to_list_editor).setOnClickListener {
-            findNavController().navigate(R.id.action_newList_to_listEditor)
+        val name = view.findViewById<EditText>(R.id.new_list_name)
+        val create = view.findViewById<View>(R.id.new_list_create)
+        view.findViewById<View>(R.id.list_back).setOnClickListener { findNavController().popBackStack() }
+        create.setOnClickListener {
+            val value = name.text.toString().trim()
+            if (value.length !in 1..40) {
+                name.error = getString(R.string.list_name_invalid)
+                return@setOnClickListener
+            }
+            create.isEnabled = false
+            viewLifecycleOwner.lifecycleScope.launch {
+                ServiceLocator.listRepository.createList(value).onSuccess { list ->
+                    findNavController().navigate(R.id.action_newList_to_listEditor, bundleOf("listId" to list.id))
+                }.onFailure {
+                    create.isEnabled = true
+                    Snackbar.make(view, R.string.list_write_error, Snackbar.LENGTH_LONG).show()
+                }
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.smartcart.app.R
+import com.smartcart.app.data.ServiceLocator
 import com.smartcart.app.viewmodel.lists.HomeViewModel
 
 /** מסך 05 · מסך הבית. שלד: הכותרת מגיעה מה-ViewModel, והכפתורים מנווטים לפי גרף הניווט. */
@@ -26,8 +27,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         view.findViewById<View>(R.id.btn_to_my_lists).setOnClickListener {
             findNavController().navigate(R.id.action_home_to_myLists)
         }
-        view.findViewById<View>(R.id.btn_to_list_editor).setOnClickListener {
-            findNavController().navigate(R.id.action_home_to_listEditor)
+        openStoredList(view.findViewById(R.id.btn_to_list_editor), R.id.action_home_to_listEditor, latestOnly = true) {
+            ServiceLocator.listRepository.ownedLists()
         }
         view.findViewById<View>(R.id.btn_to_shared_lists).setOnClickListener {
             findNavController().navigate(R.id.action_home_to_sharedLists)

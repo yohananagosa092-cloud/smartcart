@@ -10,14 +10,17 @@ import com.smartcart.app.data.repository.SharingRepository
 import com.smartcart.app.data.repository.UserRepository
 import com.smartcart.app.data.source.DataSource
 import com.smartcart.app.data.source.FakeDataSource
+import com.smartcart.app.data.source.FirestoreDataSource
 
 /**
  * המקום היחיד שבו נבחר מקור הנתונים, ומכאן ה-ViewModels מקבלים את ה-Repositories.
- * כרגע זה מקור הנתונים המדומה. כשהחיבור ל-Firebase יהיה מוכן, מחליפים כאן שורה אחת.
+ * מסכי הרשימות והקטלוג משתמשים ב-Firestore.
  */
 object ServiceLocator {
 
-    private val dataSource: DataSource by lazy { FakeDataSource() }
+    private val dataSource: DataSource by lazy {
+        FirestoreDataSource(demo = FakeDataSource())
+    }
 
     /** האימות כבר עובד מול Firebase Authentication של הפרויקט (משימה 12). */
     val authRepository by lazy { AuthRepository(FirebaseAuthService()) }

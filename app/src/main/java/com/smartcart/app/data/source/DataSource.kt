@@ -12,6 +12,8 @@ import com.smartcart.app.data.model.Member
 import com.smartcart.app.data.model.Product
 import com.smartcart.app.data.model.ShoppingList
 import com.smartcart.app.data.model.User
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 /**
  * מקור הנתונים: כל מה שהאפליקציה קוראת וכותבת ב-Firebase.
@@ -41,8 +43,26 @@ interface DataSource {
     // ---------- items ----------
     suspend fun getItems(listId: String): List<ListItem>
     suspend fun addItem(listId: String, item: ListItem): ListItem
+    suspend fun addCatalogItem(listId: String, item: ListItem): ListItem {
+        val existing = getItems(listId).firstOrNull { it.barcode == item.barcode }
+            ?: return addItem(listId, item)
+        if (existing.quantity >= 999) throw AppException(ErrorCode.INVALID_QUANTITY)
+        return existing.copy(quantity = existing.quantity + 1).also { updateItemQuantity(listId, it) }
+    }
     suspend fun updateItem(listId: String, item: ListItem)
+    suspend fun updateItemQuantity(listId: String, item: ListItem) = updateItem(listId, item)
+    suspend fun updateItemNote(listId: String, item: ListItem) = updateItem(listId, item)
     suspend fun deleteItem(listId: String, itemId: String)
+
+    // ---------- משימה 21: סנכרון בזמן אמת ----------
+    // Flow הוא "צינור" של עדכונים: הוא שולח את המצב הנוכחי, ואחר כך גרסה חדשה בכל שינוי.
+    // המימוש כאן שולח פעם אחת בלבד; מקור נתונים שיודע להאזין לשינויים מחליף אותו.
+
+    /** הרשימה, ואחר כך גרסה חדשה שלה בכל שינוי (למשל שם חדש). */
+    fun observeList(listId: String): Flow<ShoppingList?> = flow { emit(getList(listId)) }
+
+    /** הפריטים ברשימה, ואחר כך הרשימה המעודכנת בכל הוספה, שינוי או מחיקה. */
+    fun observeItems(listId: String): Flow<List<ListItem>> = flow { emit(getItems(listId)) }
 
     // ---------- members ----------
     suspend fun getMembers(listId: String): List<Member>

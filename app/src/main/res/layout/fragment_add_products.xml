@@ -1,25 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    tools:context=".ui.lists.AddProductsFragment">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layoutDirection="rtl" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingHorizontal="24dp" android:paddingBottom="24dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:minHeight="64dp">
+        <ImageButton android:id="@+id/list_back" android:layout_width="48dp" android:layout_height="48dp"
+            android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/list_back"
+            android:src="?attr/homeAsUpIndicator" app:tint="@color/sc_mint_primary" />
+        <TextView android:id="@+id/list_title" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:text="@string/list_add_title"
+        android:textAppearance="@style/TextAppearance.SmartCart.Headline"  />
+    </LinearLayout>
+    <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/sc_line" />
+    <LinearLayout android:id="@+id/product_search" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginTop="20dp">
+        <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Input" android:hint="@string/list_search">
+        <com.google.android.material.textfield.TextInputEditText android:id="@+id/product_query"
+            android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Input.EditText" android:inputType="text" android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout><TextView android:id="@+id/product_search_help" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/list_search_help"
+        android:textAppearance="@style/TextAppearance.SmartCart.Caption"  />
+    </LinearLayout>
+    <com.google.android.material.tabs.TabLayout android:id="@+id/product_tabs" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginVertical="12dp"
+        app:tabIndicatorColor="@color/sc_mint_primary" app:tabSelectedTextColor="@color/sc_mint_primary">
+        <com.google.android.material.tabs.TabItem android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/list_search_tab" />
+        <com.google.android.material.tabs.TabItem android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/list_barcode_tab" />
+        <com.google.android.material.tabs.TabItem android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/list_free_tab" />
+    </com.google.android.material.tabs.TabLayout>
+    <LinearLayout android:id="@+id/product_camera" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+        <androidx.camera.view.PreviewView android:id="@+id/product_preview"
+            android:layout_width="match_parent" android:layout_height="220dp" />
+        <TextView android:id="@+id/product_camera_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/list_camera_permission"
+        android:textAppearance="@style/TextAppearance.SmartCart.Body" android:visibility="gone" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/product_camera_permission" android:layout_width="match_parent" android:layout_height="wrap_content"
+        style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_camera_retry" android:visibility="gone" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/product_scan_again" android:layout_width="match_parent" android:layout_height="wrap_content"
+        style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_scan_again" android:visibility="gone" />
+        <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Input" android:hint="@string/list_barcode_input">
+        <com.google.android.material.textfield.TextInputEditText android:id="@+id/product_barcode"
+            android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Input.EditText" android:inputType="number" android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.button.MaterialButton android:id="@+id/product_barcode_lookup" android:layout_width="match_parent" android:layout_height="wrap_content"
+        style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_barcode_lookup"  />
+    </LinearLayout>
+    <LinearLayout android:id="@+id/product_free" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:visibility="gone">
+        <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Input" android:hint="@string/list_free_name">
+        <com.google.android.material.textfield.TextInputEditText android:id="@+id/product_free_name"
+            android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Input.EditText" android:inputType="text" android:singleLine="true" />
+    </com.google.android.material.textfield.TextInputLayout><TextView android:id="@+id/product_free_help" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/list_free_help"
+        android:textAppearance="@style/TextAppearance.SmartCart.Caption"  /><com.google.android.material.button.MaterialButton android:id="@+id/product_free_add" android:layout_width="match_parent" android:layout_height="wrap_content"
+        style="@style/Widget.SmartCart.Button.Primary" android:text="@string/list_add"  />
+    </LinearLayout>
+    <TextView android:id="@+id/product_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/list_loading"
+        android:textAppearance="@style/TextAppearance.SmartCart.Body" android:visibility="gone" />
+    <LinearLayout android:id="@+id/product_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/screen_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="viewStart"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/skeleton_note"
-        android:textAlignment="viewStart" />
-
-</LinearLayout>
+    </LinearLayout>
+    <com.google.android.material.button.MaterialButton android:id="@+id/product_fallback" android:layout_width="match_parent" android:layout_height="wrap_content"
+        style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_free_fallback" android:layout_marginTop="28dp" />
+    <com.google.android.material.button.MaterialButton android:id="@+id/product_done" android:layout_width="match_parent" android:layout_height="wrap_content"
+        style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_done" android:layout_marginTop="12dp" />
+    </LinearLayout>
+</ScrollView>

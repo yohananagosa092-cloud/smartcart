@@ -37,7 +37,7 @@ class ComparisonRepository(private val dataSource: DataSource) {
 
     /** מסך 14: כל פריטי הסל המשותף והמחיר של כל אחד מהם ברשת אחת. */
     suspend fun chainBreakdown(listId: String, chain: ChainId): Result<List<PricedItem>> = safeCall {
-        val items = dataSource.getItems(listId)
+        val items = dataSource.getItems(listId).filter { it.barcode.isNotBlank() }
         val products = dataSource.getProducts(items.map { it.barcode }).associateBy { it.barcode }
         items.mapNotNull { item ->
             val prices = products[item.barcode]?.prices
