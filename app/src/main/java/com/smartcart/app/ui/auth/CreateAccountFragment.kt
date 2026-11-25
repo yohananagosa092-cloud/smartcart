@@ -21,6 +21,7 @@ class CreateAccountFragment : Fragment(R.layout.fragment_create_account) {
     private val viewModel: CreateAccountViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        view.findViewById<View>(R.id.auth_header_back).setOnClickListener { findNavController().popBackStack() }
         val name = view.findViewById<TextInputLayout>(R.id.auth_name_field)
         val email = view.findViewById<TextInputLayout>(R.id.auth_email_field)
         val password = view.findViewById<TextInputLayout>(R.id.auth_password_field)

@@ -16,6 +16,7 @@ class ResetPasswordFragment : Fragment(R.layout.fragment_reset_password) {
     private val viewModel: ResetPasswordViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        view.findViewById<View>(R.id.auth_header_back).setOnClickListener { findNavController().popBackStack() }
         val email = view.findViewById<TextInputLayout>(R.id.auth_email_field)
         val submit = view.findViewById<View>(R.id.auth_submit)
         val back = view.findViewById<View>(R.id.auth_alternate)

@@ -48,6 +48,7 @@ class FakeDataSource(
     private val comparisons = mutableMapOf<String, Comparison>()
     private val products: Map<String, Product>
     private val chains: List<Chain>
+    private val changes = MutableStateFlow(0)
 
     init {
         val now = now()
@@ -134,8 +135,6 @@ class FakeDataSource(
      * מונה שינויים: כל כתיבה מגדילה אותו (notifyChanged), וכל מי שמאזין מקבל את המצב החדש.
      * כך נתוני הדמה מתנהגים כמו Firestore, שמודיע על כל שינוי.
      */
-    private val changes = MutableStateFlow(0)
-
     private fun notifyChanged() = changes.update { it + 1 }
 
     override fun observeList(listId: String): Flow<ShoppingList?> =

@@ -13,13 +13,16 @@
         android:paddingHorizontal="24dp"
         android:paddingBottom="24dp">
 
-        <TextView
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+            <TextView android:layout_width="36dp" android:layout_height="48dp" android:gravity="center" android:importantForAccessibility="no" android:textDirection="ltr" android:text="@string/sc_screen_chevron" android:textColor="@color/sc_mint_primary" android:textSize="28sp" />
+            <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/auth_sign_in_title"
-            android:textAppearance="@style/TextAppearance.SmartCart.Headline"
+            android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Headline"
             android:gravity="start|center_vertical"
-            android:minHeight="64dp" />
+            android:minHeight="72dp" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -30,7 +33,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/auth_brand"
-            android:textAppearance="@style/TextAppearance.SmartCart.Display"
+            android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Display"
             android:layout_marginTop="28dp"
             android:gravity="center"
             android:textColor="@color/sc_mint_primary" />
@@ -39,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/auth_welcome"
-            android:textAppearance="@style/TextAppearance.SmartCart.Headline"
+            android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Headline"
             android:layout_marginTop="26dp" />
 
         <TextView
@@ -112,7 +115,7 @@
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/auth_submit"
-            style="@style/Widget.SmartCart.Button.Primary"
+            style="@style/Widget.SmartCart.Button.Primary" android:fontFamily="@font/rubik_semibold" android:textFontWeight="600"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/auth_sign_in"

@@ -13,13 +13,16 @@
         android:paddingHorizontal="24dp"
         android:paddingBottom="24dp">
 
-        <TextView
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical">
+            <com.google.android.material.button.MaterialButton android:id="@+id/auth_header_back" style="@style/Widget.SmartCart.Button.Secondary" android:layout_width="36dp" android:layout_height="48dp" android:minWidth="0dp" android:padding="0dp" android:textDirection="ltr" android:text="@string/sc_screen_chevron" android:textSize="28sp" android:contentDescription="@string/list_back" />
+            <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="start|center_vertical"
-            android:minHeight="64dp"
+            android:minHeight="72dp"
             android:text="@string/auth_verify_title"
-            android:textAppearance="@style/TextAppearance.SmartCart.Headline" />
+            android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Headline" />
+        </LinearLayout>
 
         <View
             android:layout_width="match_parent"
@@ -33,14 +36,14 @@
             android:gravity="center"
             android:importantForAccessibility="no"
             android:text="@string/auth_verify_icon"
-            android:textAppearance="@style/TextAppearance.SmartCart.Display" />
+            android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Display" />
         <TextView
             android:id="@+id/auth_verify_heading"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="42dp"
             android:text="@string/auth_verify_heading"
-            android:textAppearance="@style/TextAppearance.SmartCart.Headline" />
+            android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Headline" />
         <TextView
             android:id="@+id/auth_verify_email"
             android:layout_width="match_parent"
@@ -50,7 +53,7 @@
             android:textAppearance="@style/TextAppearance.SmartCart.Body" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/auth_submit"
-            style="@style/Widget.SmartCart.Button.Primary"
+            style="@style/Widget.SmartCart.Button.Primary" android:fontFamily="@font/rubik_semibold" android:textFontWeight="600"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="64dp"
@@ -58,7 +61,7 @@
             android:text="@string/auth_verify_continue" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/auth_resend"
-            style="@style/Widget.SmartCart.Button.Primary"
+            style="@style/Widget.SmartCart.Button.Primary" android:fontFamily="@font/rubik_semibold" android:textFontWeight="600"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"

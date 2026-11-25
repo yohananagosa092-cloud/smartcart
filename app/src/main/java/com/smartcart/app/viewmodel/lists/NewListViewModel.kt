@@ -1,12 +1,8 @@
 package com.smartcart.app.viewmodel.lists
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.smartcart.app.data.ServiceLocator
 
-/** ה-ViewModel של מסך 06 · רשימה חדשה. בשלב השלד הוא מחזיק רק את כותרת המסך. */
 class NewListViewModel : ViewModel() {
-
-    private val _title = MutableLiveData("06 · רשימה חדשה")
-    val title: LiveData<String> = _title
+    suspend fun createList(name: String) = ServiceLocator.listRepository.createList(name)
 }

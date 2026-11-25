@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class ListEditorViewModel : ViewModel() {
@@ -21,14 +22,19 @@ class ListEditorViewModel : ViewModel() {
     val state = _state.asStateFlow()
     private val _failed = MutableStateFlow(false)
     val failed = _failed.asStateFlow()
+    private val _itemsError = MutableStateFlow<Throwable?>(null)
+    val itemsError = _itemsError.asStateFlow()
     private var observation: Job? = null
 
     fun observe(id: String) {
         observation?.cancel()
         _failed.value = false
+        _itemsError.value = null
         val uid = ServiceLocator.authRepository.currentUser()?.uid
         observation = viewModelScope.launch {
-            combine(lists.observeList(id), items.observeItems(id)) { list, entries ->
+            val entriesFlow = items.observeItems(id).onStart { emit(emptyList()) }
+                .catch { _itemsError.value = it }
+            combine(lists.observeList(id), entriesFlow) { list, entries ->
                 State(list, entries, uid != null && list?.ownerUid == uid)
             }.catch { _failed.value = true }.collect { _state.value = it }
         }

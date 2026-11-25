@@ -39,6 +39,13 @@ class DataLayerTest {
     private fun errorOf(result: Result<*>) = (result.exceptionOrNull() as AppException).code
 
     @Test
+    fun seededDataSourceCanInitializeBeforeFirestoreIsOpened() = runBlocking {
+        val seeded = FakeDataSource(delayMs = 0)
+        val uid = requireNotNull(seeded.currentUid())
+        assertEquals(true, seeded.getListsOwnedBy(uid).isNotEmpty())
+    }
+
+    @Test
     fun barcodeLookupFindsOnlyAnExactCatalogMatch() = runBlocking {
         val milk = product("חלב")
         assertEquals(milk, products.findBarcode(milk.barcode).getOrThrow())

@@ -110,8 +110,9 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
                             return@collect
                         }
                         title.text = list.name
-                        status.isVisible = state.items.isEmpty()
-                        status.setText(R.string.list_no_items)
+                        val itemsError = model.itemsError.value
+                        status.isVisible = itemsError != null || state.items.isEmpty()
+                        status.setText(itemsError?.listErrorMessage(R.string.list_missing) ?: R.string.list_no_items)
                         share.isVisible = state.owner
                         menu.isVisible = state.owner
                         members.isVisible = true
@@ -123,7 +124,7 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
                             }
                         } else null)
                         add.isEnabled = true
-                        compare.isEnabled = state.items.any { it.barcode.isNotBlank() }
+                        compare.isEnabled = itemsError == null && state.items.any { it.barcode.isNotBlank() }
                         budget.isVisible = list.lastBudget != null
                         list.lastBudget?.let { amount ->
                             budgetLabel.text = getString(R.string.list_budget, amount)
@@ -162,6 +163,16 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
                                 }
                             }
                             rows.addView(row)
+                        }
+                    }
+                }
+                launch {
+                    model.itemsError.collect { error ->
+                        if (error != null && model.state.value?.list != null) {
+                            rows.removeAllViews()
+                            compare.isEnabled = false
+                            status.setText(error.listErrorMessage(R.string.list_missing))
+                            status.isVisible = true
                         }
                     }
                 }

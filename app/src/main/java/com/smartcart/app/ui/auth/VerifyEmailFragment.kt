@@ -18,6 +18,7 @@ class VerifyEmailFragment : Fragment(R.layout.fragment_verify_email) {
     private val viewModel: VerifyEmailViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        view.findViewById<View>(R.id.auth_header_back).setOnClickListener { findNavController().popBackStack() }
         val email = view.findViewById<TextView>(R.id.auth_verify_email)
         val verify = view.findViewById<View>(R.id.auth_submit)
         val resend = view.findViewById<TextView>(R.id.auth_resend)
