@@ -1,32 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    tools:context=".ui.auth.VerifyEmailFragment">
+    android:fillViewport="true"
+    android:layoutDirection="rtl">
 
-    <TextView
-        android:id="@+id/screen_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="viewStart"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="24dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/skeleton_note"
-        android:textAlignment="viewStart" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:minHeight="64dp"
+            android:text="@string/auth_verify_title"
+            android:textAppearance="@style/TextAppearance.SmartCart.Headline" />
 
-    <Button
-        android:id="@+id/btn_to_home"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/btn_verify_email_to_home" />
-
-</LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/sc_line" />
+        <TextView
+            android:id="@+id/auth_verify_icon"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="48dp"
+            android:gravity="center"
+            android:importantForAccessibility="no"
+            android:text="@string/auth_verify_icon"
+            android:textAppearance="@style/TextAppearance.SmartCart.Display" />
+        <TextView
+            android:id="@+id/auth_verify_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="42dp"
+            android:text="@string/auth_verify_heading"
+            android:textAppearance="@style/TextAppearance.SmartCart.Headline" />
+        <TextView
+            android:id="@+id/auth_verify_email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:text="@string/auth_verify_intro"
+            android:textAppearance="@style/TextAppearance.SmartCart.Body" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/auth_submit"
+            style="@style/Widget.SmartCart.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            android:minHeight="56dp"
+            android:text="@string/auth_verify_continue" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/auth_resend"
+            style="@style/Widget.SmartCart.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:minHeight="56dp"
+            android:text="@string/auth_verify_resend" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/auth_alternate"
+            style="@style/Widget.SmartCart.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:minHeight="56dp"
+            android:text="@string/auth_verify_change" />
+    </LinearLayout>
+</ScrollView>

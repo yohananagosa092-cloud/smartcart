@@ -1,0 +1,34 @@
+package com.smartcart.app.data.repository
+
+import com.smartcart.app.data.model.Chain
+import com.smartcart.app.data.model.Product
+import com.smartcart.app.data.safeCall
+import com.smartcart.app.data.source.DataSource
+
+/** קטלוג המוצרים והרשתות (מסכים 07, 12). */
+class ProductRepository(private val dataSource: DataSource) {
+
+    /**
+     * חיפוש מוצרים במסך 07. מחפשים לפי המילה הראשונה בקטלוג, ומשאירים רק מוצרים
+     * שכל מילה בחיפוש היא תחילת מילה בשם שלהם.
+     */
+    suspend fun search(query: String): Result<List<Product>> = safeCall {
+        val words = query.trim().lowercase().split(" ").filter { it.isNotEmpty() }
+        if (words.isEmpty() || words.first().length < MIN_QUERY_LENGTH) {
+            emptyList()
+        } else {
+            dataSource.searchProducts(words.first(), SEARCH_LIMIT).filter { product ->
+                val nameWords = product.name.lowercase().split(" ")
+                words.all { word -> nameWords.any { it.startsWith(word) } }
+            }
+        }
+    }
+
+    suspend fun chains(): Result<List<Chain>> = safeCall { dataSource.getChains() }
+
+    companion object {
+        /** התחיליות בקטלוג מתחילות באורך 2, ולכן החיפוש מתחיל מ-2 תווים. */
+        const val MIN_QUERY_LENGTH = 2
+        const val SEARCH_LIMIT = 20
+    }
+}

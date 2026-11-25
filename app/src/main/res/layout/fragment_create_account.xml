@@ -1,32 +1,153 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    tools:context=".ui.auth.CreateAccountFragment">
+    android:fillViewport="true"
+    android:layoutDirection="rtl">
 
-    <TextView
-        android:id="@+id/screen_title"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textAlignment="viewStart"
-        android:textAppearance="?attr/textAppearanceHeadlineSmall" />
+        android:orientation="vertical"
+        android:paddingHorizontal="24dp"
+        android:paddingBottom="24dp">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
-        android:text="@string/skeleton_note"
-        android:textAlignment="viewStart" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/auth_register_title"
+            android:textAppearance="@style/TextAppearance.SmartCart.Headline"
+            android:gravity="start|center_vertical"
+            android:minHeight="64dp" />
 
-    <Button
-        android:id="@+id/btn_to_verify_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="@string/btn_create_account_to_verify_email" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/sc_line" />
 
-</LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/auth_name"
+            android:textAppearance="@style/TextAppearance.SmartCart.Body"
+            android:layout_marginTop="16dp"
+            android:labelFor="@id/auth_name_value" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/auth_name_field"
+            style="@style/Widget.SmartCart.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            app:helperText="@string/auth_name_rule">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/auth_name_value"
+                style="@style/Widget.SmartCart.Input.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:inputType="textPersonName"
+                android:singleLine="true"
+                android:autofillHints="personName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/auth_email"
+            android:textAppearance="@style/TextAppearance.SmartCart.Body"
+            android:layout_marginTop="16dp"
+            android:labelFor="@id/auth_email_value" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/auth_email_field"
+            style="@style/Widget.SmartCart.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/auth_email_value"
+                style="@style/Widget.SmartCart.Input.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:inputType="textEmailAddress"
+                android:singleLine="true"
+                android:autofillHints="emailAddress"
+                android:hint="@string/auth_email_hint" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/auth_password"
+            android:textAppearance="@style/TextAppearance.SmartCart.Body"
+            android:layout_marginTop="16dp"
+            android:labelFor="@id/auth_password_value" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/auth_password_field"
+            style="@style/Widget.SmartCart.Input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:hintEnabled="false"
+            app:helperText="@string/auth_password_rule">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/auth_password_value"
+                style="@style/Widget.SmartCart.Input.EditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="start|center_vertical"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:autofillHints="newPassword"
+                android:saveEnabled="false" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.progressindicator.LinearProgressIndicator
+            android:id="@+id/auth_strength_bar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:max="3"
+            app:indicatorColor="@color/sc_mint_primary"
+            app:trackColor="@color/sc_line"
+            app:trackCornerRadius="2dp" />
+
+        <TextView
+            android:id="@+id/auth_strength_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:accessibilityLiveRegion="polite"
+            android:textAppearance="@style/TextAppearance.SmartCart.Caption"
+            android:textColor="@color/sc_mint_primary" />
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/auth_terms_check"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:minHeight="48dp"
+            android:text="@string/auth_terms"
+            android:textAppearance="@style/TextAppearance.SmartCart.Body" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/auth_submit"
+            style="@style/Widget.SmartCart.Button.Primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/auth_register_title"
+            android:layout_marginTop="22dp"
+            android:minHeight="56dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/auth_alternate"
+            style="@style/Widget.SmartCart.Button.Secondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/auth_sign_in_link"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+</ScrollView>

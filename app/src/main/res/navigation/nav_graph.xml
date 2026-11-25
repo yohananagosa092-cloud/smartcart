@@ -47,6 +47,10 @@
             app:destination="@id/homeFragment"
             app:popUpTo="@id/signInFragment"
             app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_verifyEmail_to_createAccount"
+            app:destination="@id/createAccountFragment"
+            app:popUpTo="@id/signInFragment" />
     </fragment>
 
     <!-- 04 · איפוס סיסמה -->

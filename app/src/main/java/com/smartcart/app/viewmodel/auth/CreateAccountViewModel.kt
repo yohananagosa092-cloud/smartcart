@@ -1,12 +1,18 @@
 package com.smartcart.app.viewmodel.auth
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
+import com.smartcart.app.data.auth.AuthRepository
+import com.smartcart.app.data.auth.AuthUser
 
-/** ה-ViewModel של מסך 02 · הרשמה. בשלב השלד הוא מחזיק רק את כותרת המסך. */
-class CreateAccountViewModel : ViewModel() {
+class CreateAccountViewModel : AuthFormViewModel<AuthUser>() {
+    fun register(name: String, email: String, password: String, acceptedTerms: Boolean) {
+        if (!acceptedTerms) return
+        runRequest { repository.signUp(name, email, password) }
+    }
 
-    private val _title = MutableLiveData("02 · הרשמה")
-    val title: LiveData<String> = _title
+    fun passwordStrength(password: String): Int = when {
+        password.isEmpty() -> 0
+        password.length < AuthRepository.MIN_PASSWORD_LENGTH -> 1
+        password.length >= 12 && password.any(Char::isLetter) && password.any { !it.isLetter() } -> 3
+        else -> 2
+    }
 }

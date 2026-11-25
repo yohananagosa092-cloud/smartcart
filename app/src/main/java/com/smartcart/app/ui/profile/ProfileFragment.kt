@@ -21,6 +21,7 @@ class ProfileFragment : Fragment(R.layout.fragment_profile) {
         viewModel.title.observe(viewLifecycleOwner) { title.text = it }
 
         view.findViewById<View>(R.id.btn_to_sign_in).setOnClickListener {
+            viewModel.signOut()
             findNavController().navigate(R.id.action_profile_to_signIn)
         }
     }
