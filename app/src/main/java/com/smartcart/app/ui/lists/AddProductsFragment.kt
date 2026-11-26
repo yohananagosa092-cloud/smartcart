@@ -36,17 +36,20 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
         val status = view.findViewById<TextView>(R.id.product_status)
         val addFree = view.findViewById<View>(R.id.product_free_add)
         val fallback = view.findViewById<TextView>(R.id.product_fallback)
+        val freeShortcut = view.findViewById<View>(R.id.product_free_shortcut)
         val done = view.findViewById<View>(R.id.product_done)
         val back = view.findViewById<View>(R.id.list_back)
 
         query.doAfterTextChanged { if (tabs.selectedTabPosition == 0) model.search(it.toString()) }
         freeName.doAfterTextChanged { freeName.error = null }
         freeQuantity.doAfterTextChanged { freeQuantity.error = null }
-        fallback.setOnClickListener {
+        val openFree = View.OnClickListener {
             freeName.setText(query.text)
             tabs.selectTab(tabs.getTabAt(1))
             freeName.requestFocus()
         }
+        fallback.setOnClickListener(openFree)
+        freeShortcut.setOnClickListener(openFree)
         back.setOnClickListener { findNavController().popBackStack() }
         done.setOnClickListener { findNavController().popBackStack() }
         addFree.setOnClickListener {
@@ -75,6 +78,7 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
                 view.findViewById<View>(R.id.product_search).isVisible = tab.position == 0
                 view.findViewById<View>(R.id.product_free).isVisible = tab.position == 1
                 fallback.isVisible = false
+                freeShortcut.isVisible = false
                 view.findViewById<TextView>(R.id.list_title).setText(
                     if (tab.position == 0) R.string.list_add_title else R.string.list_products_title,
                 )
@@ -103,6 +107,7 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
                             else R.style.TextAppearance_SmartCart_Body)
                         view.findViewById<View>(R.id.product_empty_detail).isVisible = emptySearch
                         fallback.isVisible = emptySearch
+                        freeShortcut.isVisible = tabs.selectedTabPosition == 0 && state.products.isNotEmpty()
                         if (emptySearch) fallback.text = getString(R.string.list_free_from_query, query.text.toString().trim())
                         results.removeAllViews()
                         state.products.forEach { product ->

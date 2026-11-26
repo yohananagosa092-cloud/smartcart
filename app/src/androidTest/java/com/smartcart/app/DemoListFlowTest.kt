@@ -102,6 +102,7 @@ class DemoListFlowTest {
             scenario.onActivity { assertTrue(it.findViewById<LinearLayout>(R.id.product_results).childCount == 0) }
             scenario.onActivity { it.findViewById<EditText>(R.id.product_query).setText("חלב") }
             scenario.await { findViewById<View>(R.id.list_row_add) != null }
+            scenario.await { findViewById<View>(R.id.product_free_shortcut)?.visibility == View.VISIBLE }
             capture("07-catalog-search")
             scenario.click(R.id.list_row_add)
             scenario.await {

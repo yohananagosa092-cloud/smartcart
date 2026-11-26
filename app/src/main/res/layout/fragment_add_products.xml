@@ -67,6 +67,10 @@
     <LinearLayout android:id="@+id/product_results" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" >
 
     </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/product_free_shortcut" style="@style/Widget.SmartCart.Button.Secondary"
+        android:layout_width="match_parent" android:layout_height="48dp"
+        android:layout_marginTop="28dp" android:text="@string/list_free_fallback" android:visibility="gone" />
     <com.google.android.material.button.MaterialButton android:id="@+id/product_fallback" android:layout_width="match_parent" android:layout_height="wrap_content"
         style="@style/Widget.SmartCart.Button.Primary" android:text="@string/list_free_fallback"
         android:layout_marginTop="28dp" android:visibility="gone" />
