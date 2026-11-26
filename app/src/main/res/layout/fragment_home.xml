@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" android:layout_width="match_parent" android:layout_height="match_parent" android:layoutDirection="rtl" android:background="@color/sc_bg" android:orientation="vertical">
     <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingHorizontal="24dp" android:paddingBottom="18dp">
-            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="72dp" android:gravity="center_vertical">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="76dp" android:gravity="center_vertical">
     <TextView android:layout_width="36dp" android:layout_height="48dp" android:gravity="center" android:importantForAccessibility="no" android:textDirection="ltr" android:text="@string/sc_screen_chevron" android:textColor="@color/sc_mint_primary" android:textSize="26sp" />
     <TextView  android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="start|center_vertical" android:textAlignment="viewStart" android:text="@string/app_name" android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Headline"  />
 </LinearLayout><View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/sc_line" />
