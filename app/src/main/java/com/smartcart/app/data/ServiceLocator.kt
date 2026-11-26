@@ -1,7 +1,10 @@
 package com.smartcart.app.data
 
+import android.content.Context
 import com.smartcart.app.data.auth.AuthRepository
 import com.smartcart.app.data.auth.FirebaseAuthService
+import com.smartcart.app.data.local.AppDatabase
+import com.smartcart.app.data.repository.CacheRepository
 import com.smartcart.app.data.repository.ComparisonRepository
 import com.smartcart.app.data.repository.ItemRepository
 import com.smartcart.app.data.repository.ListRepository
@@ -28,6 +31,19 @@ object ServiceLocator {
     private val dataSource: DataSource by lazy {
         if (USE_FIRESTORE) FirestoreDataSource(demo = FakeDataSource()) else FakeDataSource()
     }
+
+    /** ה-Context של האפליקציה. SmartCartApp מכניסה אותו כשהאפליקציה נפתחת. */
+    private lateinit var appContext: Context
+
+    fun init(context: Context) {
+        appContext = context.applicationContext
+    }
+
+    /** מסד הנתונים שבטלפון (Room, משימה 24). נפתח רק בפעם הראשונה שצריך אותו. */
+    private val database by lazy { AppDatabase.create(appContext) }
+
+    /** המוצרים האחרונים והיסטוריית החיפוש (משימה 24). */
+    val cacheRepository by lazy { CacheRepository(database.cacheDao()) }
 
     /** האימות כבר עובד מול Firebase Authentication של הפרויקט (משימה 12). */
     val authRepository by lazy { AuthRepository(FirebaseAuthService()) }
