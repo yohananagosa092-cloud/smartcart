@@ -35,7 +35,8 @@
             android:layout_height="56dp" android:layout_marginTop="76dp" android:enabled="false" />
         <com.google.android.material.button.MaterialButton android:id="@+id/list_action_cancel"
             style="@style/Widget.SmartCart.Button.Secondary" android:layout_width="match_parent"
-            android:layout_height="56dp" android:layout_marginTop="8dp" android:text="@android:string/cancel"
+            android:layout_height="56dp" android:layout_marginTop="8dp" android:text="@string/sc_cancel"
+            android:backgroundTint="@color/sc_surface"
             android:visibility="gone" />
     </LinearLayout>
 </ScrollView>

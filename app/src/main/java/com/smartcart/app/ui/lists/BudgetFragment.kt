@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.textfield.TextInputLayout
+import com.google.android.material.chip.Chip
 import com.smartcart.app.R
 import com.smartcart.app.data.ServiceLocator
 import kotlinx.coroutines.launch
@@ -26,8 +27,16 @@ class BudgetFragment : Fragment(R.layout.fragment_budget) {
         view.findViewById<View>(R.id.list_back).setOnClickListener { findNavController().popBackStack() }
         save.isEnabled = false
         amount.isEnabled = false
-        choices.keys.forEach { view.findViewById<View>(it).isEnabled = false }
-        amount.doAfterTextChanged { input.error = null }
+        val chips = choices.mapKeys { (button, _) -> view.findViewById<Chip>(button) }
+        chips.keys.forEach {
+            it.isCheckable = true
+            it.isEnabled = false
+        }
+        amount.doAfterTextChanged { text ->
+            input.error = null
+            val value = text?.toString()?.toIntOrNull()
+            chips.forEach { (chip, preset) -> chip.isChecked = value == preset }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             val list = repository.getList(id).getOrNull()
             if (list == null) {
@@ -47,11 +56,9 @@ class BudgetFragment : Fragment(R.layout.fragment_budget) {
             }
             amount.isEnabled = true
             save.isEnabled = true
-            choices.forEach { (button, value) ->
-                view.findViewById<View>(button).apply {
-                    isEnabled = true
-                    setOnClickListener { amount.setText(value.toString()) }
-                }
+            chips.forEach { (chip, value) ->
+                chip.isEnabled = true
+                chip.setOnClickListener { amount.setText(value.toString()) }
             }
             save.setOnClickListener {
                 val value = amount.text.toString().toIntOrNull()

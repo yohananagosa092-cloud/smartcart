@@ -41,7 +41,7 @@ class VerifyEmailFragment : Fragment(R.layout.fragment_verify_email) {
         change.setOnClickListener {
             MaterialAlertDialogBuilder(requireContext())
                 .setMessage(R.string.auth_verify_confirm)
-                .setNegativeButton(android.R.string.cancel, null)
+                .setNegativeButton(R.string.sc_cancel, null)
                 .setPositiveButton(R.string.auth_verify_confirm_delete) { _, _ -> viewModel.changeEmail() }
                 .show()
         }

@@ -29,6 +29,6 @@
         android:layout_marginTop="56dp" android:text="@string/invitation_accept" />
     <com.google.android.material.button.MaterialButton android:id="@+id/invitation_decline"
         style="@style/Widget.SmartCart.Button.Secondary" android:layout_width="match_parent" android:layout_height="56dp"
-        android:layout_marginTop="8dp" android:text="@string/invitation_decline" />
+        android:layout_marginTop="8dp" android:backgroundTint="@color/sc_surface" android:text="@string/invitation_decline" />
     </LinearLayout>
 </ScrollView>

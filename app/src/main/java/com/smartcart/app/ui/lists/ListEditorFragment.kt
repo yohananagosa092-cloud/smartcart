@@ -218,7 +218,7 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
 
     private fun confirm(message: Int, action: Int, accept: () -> Unit) {
         MaterialAlertDialogBuilder(requireContext()).setMessage(message)
-            .setNegativeButton(android.R.string.cancel, null)
+            .setNegativeButton(R.string.sc_cancel, null)
             .setPositiveButton(action) { _, _ -> accept() }.show()
     }
 
@@ -228,7 +228,7 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
             setSelection(length())
         }
         MaterialAlertDialogBuilder(requireContext()).setTitle(title).setView(field)
-            .setNegativeButton(android.R.string.cancel, null)
+            .setNegativeButton(R.string.sc_cancel, null)
             .setPositiveButton(R.string.list_save) { _, _ -> save(field.text.toString()) }.show()
     }
 

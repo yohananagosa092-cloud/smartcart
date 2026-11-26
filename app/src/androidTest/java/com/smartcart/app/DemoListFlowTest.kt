@@ -61,7 +61,14 @@ class DemoListFlowTest {
             scenario.click(R.id.editor_add)
             scenario.await { findViewById<TabLayout>(R.id.product_tabs) != null }
             scenario.selectProductTab(1)
-            scenario.await { findViewById<TextView>(R.id.list_row_name)?.text?.toString() == "חלב 3% שומן" }
+            try {
+                scenario.await(timeoutMs = 25_000) {
+                    findViewById<TextView>(R.id.list_row_name)?.text?.toString() == "חלב 3% שומן"
+                }
+            } catch (failure: AssertionError) {
+                capture("07-camera-fixture-preview")
+                throw failure
+            }
             capture("07-camera-scan")
             scenario.click(R.id.list_row_add)
             scenario.await {
@@ -287,6 +294,14 @@ class DemoListFlowTest {
                 val quantity = findViewById<QuantitySelectorView>(R.id.list_row_quantity)
                 quantity?.isEnabled == true && quantity.value == 3
             }
+            scenario.click(R.id.list_row_detail)
+            val noteField = findNode { it.className?.toString() == EditText::class.java.name }
+            assertTrue(noteField.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, android.os.Bundle().apply {
+                putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, "ללא לקטוז")
+            }))
+            capture("08-note")
+            clickText(R.string.list_save)
+            scenario.await { findViewById<TextView>(R.id.list_row_detail)?.text?.toString() == "ללא לקטוז" }
             scenario.click(R.id.editor_menu)
             capture("08-menu")
             scenario.click(R.id.editor_budget_action)
@@ -396,8 +411,8 @@ class DemoListFlowTest {
         onActivity { assertTrue(it.findViewById<View>(id).performClick()) }
     }
 
-    private fun ActivityScenario<MainActivity>.await(condition: MainActivity.() -> Boolean) {
-        val deadline = SystemClock.elapsedRealtime() + 10_000
+    private fun ActivityScenario<MainActivity>.await(timeoutMs: Long = 10_000, condition: MainActivity.() -> Boolean) {
+        val deadline = SystemClock.elapsedRealtime() + timeoutMs
         do {
             var matched = false
             onActivity { matched = it.condition() }

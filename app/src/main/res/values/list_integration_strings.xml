@@ -29,4 +29,5 @@
     <string name="list_save_name">שמירת השם</string>
     <string name="list_delete_title">למחוק את %1$s?</string>
     <string name="list_delete_warning">הרשימה תימחק גם אצל כל המשתתפות בה.</string>
+    <string name="sc_cancel">ביטול</string>
 </resources>
