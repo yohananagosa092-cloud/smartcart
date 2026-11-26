@@ -12,6 +12,7 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.smartcart.app.data.AppException
 import com.smartcart.app.data.ErrorCode
 import com.smartcart.app.data.model.ChainId
+import com.smartcart.app.data.model.InviteLink
 import com.smartcart.app.data.model.Product
 import com.smartcart.app.data.model.ChainPrice
 import com.smartcart.app.data.model.Member
@@ -70,6 +71,18 @@ class FirestoreDataSource(
 
     /** המשתמשת המחוברת ב-Firebase Authentication (משימה 12). */
     override fun currentUid(): String? = auth.currentUser?.uid
+
+    // The live email invitation collection and callable are pending team integration.
+    override suspend fun pendingInvitations(): List<InviteLink> = emptyList()
+
+    override suspend fun respondToPendingInvitation(token: String, accept: Boolean): String? =
+        throw AppException(ErrorCode.LINK_NOT_FOUND)
+
+    override suspend fun updateBudget(listId: String, amount: Int) {
+        lists.document(listId).update(
+            mapOf("budget" to amount, "updatedAt" to FieldValue.serverTimestamp()),
+        ).await()
+    }
 
     // ---------- שלב 2: קריאת רשימות ----------
 

@@ -13,6 +13,11 @@ class ListRepository(private val dataSource: DataSource) {
 
     fun isOwner(list: ShoppingList): Boolean = list.ownerUid == dataSource.currentUid()
 
+    suspend fun updateBudget(listId: String, amount: Int): Result<Unit> = safeCall {
+        if (amount !in 1..10_000) throw AppException(ErrorCode.INVALID_BUDGET)
+        dataSource.updateBudget(listId, amount)
+    }
+
     /** כל הרשימות שהמשתמשת משתתפת בהן, מהחדשה לישנה (מסכים 05, 16). */
     suspend fun myLists(): Result<List<ShoppingList>> = safeCall {
         dataSource.getListsForMember(dataSource.requireUid())

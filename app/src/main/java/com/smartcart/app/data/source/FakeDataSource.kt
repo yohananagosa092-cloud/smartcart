@@ -45,6 +45,7 @@ class FakeDataSource(
     private val items = mutableMapOf<String, MutableMap<String, ListItem>>()   // listId → פריטים
     private val members = mutableMapOf<String, MutableMap<String, Member>>()  // listId → משתתפות
     private val inviteLinks = mutableMapOf<String, InviteLink>()
+    private val pendingInvitees = mutableMapOf<String, String>()
     private val comparisons = mutableMapOf<String, Comparison>()
     private val products: Map<String, Product>
     private val chains: List<Chain>
@@ -97,6 +98,13 @@ class FakeDataSource(
         network()
         val list = requireOwnedList(listId)
         lists[listId] = list.copy(name = name, updatedAt = now())
+        notifyChanged()
+    }
+
+    override suspend fun updateBudget(listId: String, amount: Int) {
+        network()
+        val list = requireOwnedList(listId)
+        lists[listId] = list.copy(lastBudget = amount, updatedAt = now())
         notifyChanged()
     }
 
@@ -249,7 +257,7 @@ class FakeDataSource(
                 lastComparisonId = comparisonId,
                 lastCheapestChain = result.cheapestChain,
                 lastCheapestTotal = result.cheapestChain?.let { result.totals[it] },
-                lastBudget = comparison.budget,
+                lastBudget = comparison.budget ?: list.lastBudget,
             )
         }
         users[uid]?.let { users[uid] = it.copy(comparisonCount = it.comparisonCount + 1) }
@@ -282,6 +290,28 @@ class FakeDataSource(
 
     override suspend fun joinList(token: String): String {
         network()
+        return joinLinkedList(token)
+    }
+
+    override suspend fun pendingInvitations(): List<InviteLink> {
+        network()
+        val uid = requireUid()
+        return pendingInvitees.filterValues { it == uid }.keys.mapNotNull { token ->
+            inviteLinks[token]?.takeIf { link -> link.active && lists[link.listId]?.let { uid !in it.memberUids } == true }
+        }.sortedByDescending { it.createdAt }
+    }
+
+    override suspend fun respondToPendingInvitation(token: String, accept: Boolean): String? {
+        network()
+        if (pendingInvitees[token] != requireUid() || inviteLinks[token]?.active != true) {
+            throw AppException(ErrorCode.LINK_NOT_FOUND)
+        }
+        val listId = if (accept) joinLinkedList(token) else null
+        pendingInvitees.remove(token)
+        return listId
+    }
+
+    private fun joinLinkedList(token: String): String {
         val uid = requireUid()
         val link = inviteLinks[token] ?: throw AppException(ErrorCode.LINK_NOT_FOUND)
         if (!link.active) throw AppException(ErrorCode.LINK_CANCELLED)
@@ -473,6 +503,16 @@ class FakeDataSource(
     private fun seedDemo(now: Long) {
         users[FakeData.DEMO_UID] = User(FakeData.DEMO_UID, FakeData.DEMO_EMAIL, FakeData.DEMO_NAME, now)
         val list = insertList("קניות לשבת", FakeData.DEMO_UID, now)
+        val inviter = User("demo_inviter", "inviter@smartcart.test", "יסכה", now)
+        users[inviter.uid] = inviter
+        val invitationList = insertList("ארוחת שבת", inviter.uid, now)
+        val token = "demo-pending-invitation"
+        inviteLinks[token] = InviteLink(
+            token, invitationList.id, invitationList.name, inviter.displayName, invitationList.itemCount,
+            listOf(inviter.displayName), now, active = true,
+        )
+        pendingInvitees[token] = FakeData.DEMO_UID
+        lists[invitationList.id] = invitationList.copy(inviteToken = token)
         listOf("0000000000017" to 2, "0000000000024" to 1, "0000000000031" to 1, "0000000000086" to 1)
             .forEach { (barcode, quantity) ->
                 insertItem(

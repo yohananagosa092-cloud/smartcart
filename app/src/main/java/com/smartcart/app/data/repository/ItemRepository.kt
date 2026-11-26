@@ -12,12 +12,12 @@ import kotlinx.coroutines.flow.Flow
 /** הפריטים ברשימה (מסכים 07, 08). */
 class ItemRepository(private val dataSource: DataSource) {
 
-    suspend fun addFreeItem(listId: String, name: String): Result<ListItem> = safeCall {
+    suspend fun addFreeItem(listId: String, name: String, quantity: Int = 1, note: String = ""): Result<ListItem> = safeCall {
         val trimmed = name.trim()
         if (trimmed.isEmpty()) throw AppException(ErrorCode.INVALID_NAME)
         val now = System.currentTimeMillis()
         dataSource.addItem(listId, ListItem(
-            id = "", barcode = "", name = trimmed, quantity = 1,
+            id = "", barcode = "", name = trimmed, quantity = validQuantity(quantity), note = note.trim(),
             addedBy = dataSource.requireUid(), addedAt = now, updatedAt = now,
         ))
     }

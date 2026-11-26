@@ -46,6 +46,33 @@ class DataLayerTest {
     }
 
     @Test
+    fun pendingInvitationIsVisibleOnlyToItsRecipientAndCanBeDeclinedOnce() = runBlocking {
+        val seeded = FakeDataSource(delayMs = 0)
+        val invitations = SharingRepository(seeded)
+        val recipient = seeded.signedInUid
+        val invitation = invitations.pendingInvitations().getOrThrow().single()
+        seeded.signedInUid = "other_user"
+        assertEquals(emptyList<Any>(), invitations.pendingInvitations().getOrThrow())
+        assertEquals(ErrorCode.LINK_NOT_FOUND, errorOf(invitations.respondToPendingInvitation(invitation.token, true)))
+        seeded.signedInUid = recipient
+        assertNull(invitations.respondToPendingInvitation(invitation.token, false).getOrThrow())
+        assertEquals(emptyList<Any>(), invitations.pendingInvitations().getOrThrow())
+        assertEquals(ErrorCode.LINK_NOT_FOUND, errorOf(invitations.respondToPendingInvitation(invitation.token, false)))
+    }
+
+    @Test
+    fun budgetsValidateBoundsAndOwnership() = runBlocking {
+        val list = lists.createList("קניות").getOrThrow()
+        assertEquals(ErrorCode.INVALID_BUDGET, errorOf(lists.updateBudget(list.id, 0)))
+        assertEquals(ErrorCode.INVALID_BUDGET, errorOf(lists.updateBudget(list.id, 10_001)))
+        lists.updateBudget(list.id, 10_000).getOrThrow()
+        assertEquals(10_000, lists.getList(list.id).getOrThrow()?.lastBudget)
+        source.signedInUid = "other_user"
+        assertEquals(ErrorCode.NOT_OWNER, errorOf(lists.updateBudget(list.id, 250)))
+        assertEquals(10_000, lists.getList(list.id).getOrThrow()?.lastBudget)
+    }
+
+    @Test
     fun barcodeLookupFindsOnlyAnExactCatalogMatch() = runBlocking {
         val milk = product("חלב")
         assertEquals(milk, products.findBarcode(milk.barcode).getOrThrow())

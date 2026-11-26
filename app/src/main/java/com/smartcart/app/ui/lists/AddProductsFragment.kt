@@ -1,8 +1,11 @@
 package com.smartcart.app.ui.lists
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
@@ -28,6 +31,11 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
     private val model: AddProductsViewModel by viewModels()
     private var camera: BarcodeCamera? = null
     private val permission = registerForActivityResult(ActivityResultContracts.RequestPermission()) {
+        refreshCameraTab()
+    }
+    private val settings = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { refreshCameraTab() }
+
+    private fun refreshCameraTab() {
         view?.let { if (it.findViewById<TabLayout>(R.id.product_tabs).selectedTabPosition == 1) showCamera(it) }
     }
 
@@ -40,15 +48,20 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
         val tabs = view.findViewById<TabLayout>(R.id.product_tabs)
         val query = view.findViewById<EditText>(R.id.product_query)
         val freeName = view.findViewById<EditText>(R.id.product_free_name)
+        val freeQuantity = view.findViewById<EditText>(R.id.product_free_quantity)
+        val freeNote = view.findViewById<EditText>(R.id.product_free_note)
         val manual = view.findViewById<EditText>(R.id.product_barcode)
         val results = view.findViewById<LinearLayout>(R.id.product_results)
         val status = view.findViewById<TextView>(R.id.product_status)
         val addFree = view.findViewById<View>(R.id.product_free_add)
-        val fallback = view.findViewById<View>(R.id.product_fallback)
+        val fallback = view.findViewById<TextView>(R.id.product_fallback)
         val done = view.findViewById<View>(R.id.product_done)
         val back = view.findViewById<View>(R.id.list_back)
 
         query.doAfterTextChanged { if (tabs.selectedTabPosition == 0) model.search(it.toString()) }
+        manual.doAfterTextChanged { manual.error = null }
+        freeName.doAfterTextChanged { freeName.error = null }
+        freeQuantity.doAfterTextChanged { freeQuantity.error = null }
         fallback.setOnClickListener {
             freeName.setText(query.text)
             tabs.selectTab(tabs.getTabAt(2))
@@ -56,7 +69,15 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
         }
         back.setOnClickListener { findNavController().popBackStack() }
         done.setOnClickListener { findNavController().popBackStack() }
-        view.findViewById<View>(R.id.product_camera_permission).setOnClickListener { requestCamera() }
+        view.findViewById<View>(R.id.product_camera_permission).setOnClickListener {
+            if (needsCameraSettings()) {
+                settings.launch(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
+                    Uri.fromParts("package", requireContext().packageName, null)))
+            } else requestCamera()
+        }
+        view.findViewById<View>(R.id.product_camera_search).setOnClickListener {
+            tabs.selectTab(tabs.getTabAt(0))
+        }
         view.findViewById<View>(R.id.product_scan_again).setOnClickListener { showCamera(view) }
         view.findViewById<View>(R.id.product_barcode_lookup).setOnClickListener {
             val barcode = manual.text.toString().trim()
@@ -74,9 +95,16 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
                 freeName.error = getString(R.string.list_free_name)
                 return@setOnClickListener
             }
+            val quantity = freeQuantity.text.toString().toIntOrNull()
+            if (quantity == null || quantity !in 1..999) {
+                freeQuantity.error = getString(R.string.list_quantity_invalid)
+                return@setOnClickListener
+            }
             viewLifecycleOwner.lifecycleScope.launch {
-                if (model.addFree(listId, freeName.text.toString())) {
+                if (model.addFree(listId, freeName.text.toString(), quantity, freeNote.text.toString())) {
                     freeName.text?.clear()
+                    freeQuantity.setText(R.string.list_default_quantity)
+                    freeNote.text?.clear()
                     Snackbar.make(view, R.string.list_write_ok, Snackbar.LENGTH_SHORT).show()
                 } else {
                     Snackbar.make(view, R.string.list_write_error, Snackbar.LENGTH_LONG).show()
@@ -88,15 +116,14 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
                 view.findViewById<View>(R.id.product_search).isVisible = tab.position == 0
                 view.findViewById<View>(R.id.product_camera).isVisible = tab.position == 1
                 view.findViewById<View>(R.id.product_free).isVisible = tab.position == 2
-                fallback.isVisible = tab.position == 0
+                fallback.isVisible = false
+                view.findViewById<TextView>(R.id.list_title).setText(
+                    if (tab.position == 0) R.string.list_add_title else R.string.list_products_title,
+                )
                 model.search(if (tab.position == 0) query.text.toString() else "")
                 if (tab.position == 1) {
                     showCamera(view)
-                    val prefs = requireContext().getSharedPreferences("smartcart_permissions", 0)
-                    if (!hasCameraPermission() && !prefs.getBoolean("camera_requested", false)) {
-                        prefs.edit().putBoolean("camera_requested", true).apply()
-                        requestCamera()
-                    }
+                    if (!hasCameraPermission() && !cameraRequested()) requestCamera()
                 }
             }
 
@@ -119,7 +146,12 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
                         }
                         status.isVisible = message != null
                         message?.let(status::setText)
-                        fallback.isVisible = tabs.selectedTabPosition == 0 && state.empty
+                        val emptySearch = tabs.selectedTabPosition == 0 && state.empty
+                        status.setTextAppearance(if (emptySearch) R.style.TextAppearance_SmartCart_TitleLarge
+                            else R.style.TextAppearance_SmartCart_Body)
+                        view.findViewById<View>(R.id.product_empty_detail).isVisible = emptySearch
+                        fallback.isVisible = emptySearch
+                        if (emptySearch) fallback.text = getString(R.string.list_free_from_query, query.text.toString().trim())
                         results.removeAllViews()
                         state.products.forEach { product ->
                             val row = layoutInflater.inflate(R.layout.list_product_row, results, false)
@@ -150,16 +182,28 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
     private fun hasCameraPermission() =
         ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
 
-    private fun requestCamera() = permission.launch(Manifest.permission.CAMERA)
+    private fun cameraPreferences() = requireContext().getSharedPreferences("smartcart_permissions", 0)
+
+    private fun cameraRequested() = cameraPreferences().getBoolean("camera_requested", false)
+
+    private fun needsCameraSettings() = cameraRequested() &&
+        !shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+
+    private fun requestCamera() {
+        cameraPreferences().edit().putBoolean("camera_requested", true).apply()
+        permission.launch(Manifest.permission.CAMERA)
+    }
 
     private fun showCamera(view: View) {
         val preview = view.findViewById<PreviewView>(R.id.product_preview)
         val status = view.findViewById<TextView>(R.id.product_camera_status)
-        val retry = view.findViewById<View>(R.id.product_camera_permission)
+        val retry = view.findViewById<TextView>(R.id.product_camera_permission)
         val scanAgain = view.findViewById<View>(R.id.product_scan_again)
         val allowed = hasCameraPermission()
         preview.isVisible = allowed
         retry.isVisible = !allowed
+        retry.setText(if (needsCameraSettings()) R.string.list_camera_open_settings else R.string.list_camera_retry)
+        view.findViewById<View>(R.id.product_preview_placeholder).isVisible = !allowed
         scanAgain.isVisible = false
         status.isVisible = !allowed
         status.setText(R.string.list_camera_permission)

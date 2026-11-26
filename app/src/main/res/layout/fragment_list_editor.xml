@@ -15,9 +15,26 @@
         style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_share"  />
         <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1"/>
         <ImageButton android:id="@+id/editor_menu" android:layout_width="48dp" android:layout_height="48dp"
-            android:src="@android:drawable/ic_menu_more" app:tint="@color/sc_mint_primary"
+            android:src="@drawable/sc_more_vertical" app:tint="@color/sc_mint_primary"
             android:background="?attr/selectableItemBackgroundBorderless" android:contentDescription="@string/list_menu" />
     </LinearLayout>
+    <com.google.android.material.card.MaterialCardView android:id="@+id/editor_actions"
+        style="@style/Widget.SmartCart.Card" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp" android:visibility="gone">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical">
+            <com.google.android.material.button.MaterialButton android:id="@+id/editor_rename_action"
+                style="@style/Widget.SmartCart.Button.Secondary" android:layout_width="match_parent"
+                android:layout_height="48dp" android:gravity="start|center_vertical"
+                android:text="@string/list_rename" android:textColor="@color/sc_ink" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/editor_delete_action"
+                style="@style/Widget.SmartCart.Button.Secondary" android:layout_width="match_parent"
+                android:layout_height="48dp" android:gravity="start|center_vertical"
+                android:text="@string/list_delete" android:textColor="@color/sc_warn_coral" />
+            <com.google.android.material.button.MaterialButton android:id="@+id/editor_budget_action"
+                style="@style/Widget.SmartCart.Button.Secondary" android:layout_width="match_parent"
+                android:layout_height="48dp" android:gravity="start|center_vertical" android:text="@string/budget_title" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
     <com.google.android.material.card.MaterialCardView android:id="@+id/editor_budget" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Card"
         app:cardBackgroundColor="@color/sc_mint_soft" android:visibility="gone">
     <LinearLayout android:id="@+id/editor_budget_body" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" >
@@ -27,15 +44,21 @@
     </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
     <com.google.android.material.button.MaterialButton android:id="@+id/editor_members" android:layout_width="match_parent" android:layout_height="wrap_content"
-        style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_members"  />
+        style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_members"
+        android:gravity="start|center_vertical" android:textColor="@color/sc_ink_soft" />
     <TextView android:id="@+id/editor_status" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/list_loading"
         android:textAppearance="@style/TextAppearance.SmartCart.Body"  />
+    <TextView android:id="@+id/editor_empty_detail" android:layout_width="match_parent"
+        android:layout_height="wrap_content" android:layout_marginTop="24dp" android:textColor="@color/sc_ink_soft"
+        android:textAppearance="@style/TextAppearance.SmartCart.Body" android:visibility="gone"
+        android:text="@string/editor_empty_explanation" />
     <LinearLayout android:id="@+id/editor_items" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" >
 
     </LinearLayout>
     <com.google.android.material.button.MaterialButton android:id="@+id/editor_add" android:layout_width="match_parent" android:layout_height="wrap_content"
         style="@style/Widget.SmartCart.Button.Secondary" android:text="@string/list_add" android:layout_marginTop="28dp" />
     <com.google.android.material.button.MaterialButton android:id="@+id/editor_compare" android:layout_width="match_parent" android:layout_height="wrap_content"
-        style="@style/Widget.SmartCart.Button.Primary" android:fontFamily="@font/rubik_semibold" android:textFontWeight="600" android:text="@string/list_compare" android:layout_marginTop="22dp" android:backgroundTint="@color/sc_sun_accent" />
+        style="@style/Widget.SmartCart.Button.Primary" android:fontFamily="@font/rubik_semibold" android:textFontWeight="600"
+        android:text="@string/list_compare" android:layout_marginTop="22dp" android:backgroundTint="@color/sc_compare_button" />
     </LinearLayout>
 </ScrollView>

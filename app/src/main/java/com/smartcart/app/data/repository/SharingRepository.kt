@@ -8,6 +8,12 @@ import com.smartcart.app.data.source.DataSource
 /** שיתוף רשימה דרך קישור הזמנה, והמשתתפות ברשימה (מסכים 10, 15, 17). */
 class SharingRepository(private val dataSource: DataSource) {
 
+    suspend fun pendingInvitations(): Result<List<InviteLink>> = safeCall { dataSource.pendingInvitations() }
+
+    suspend fun respondToPendingInvitation(token: String, accept: Boolean): Result<String?> = safeCall {
+        dataSource.respondToPendingInvitation(token, accept)
+    }
+
     suspend fun members(listId: String): Result<List<Member>> = safeCall { dataSource.getMembers(listId) }
 
     /** הקישור הקבוצתי של הרשימה (מסך 10). רק בעלת הרשימה יכולה. */

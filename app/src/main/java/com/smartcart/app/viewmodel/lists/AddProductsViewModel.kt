@@ -50,8 +50,8 @@ class AddProductsViewModel : ViewModel() {
     suspend fun add(listId: String, product: Product): Boolean =
         save { items.addProduct(listId, product).isSuccess }
 
-    suspend fun addFree(listId: String, name: String): Boolean =
-        save { items.addFreeItem(listId, name).isSuccess }
+    suspend fun addFree(listId: String, name: String, quantity: Int, note: String): Boolean =
+        save { items.addFreeItem(listId, name, quantity, note).isSuccess }
 
     private suspend fun save(write: suspend () -> Boolean): Boolean {
         if (_saving.value) return false

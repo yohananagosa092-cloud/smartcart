@@ -47,9 +47,5 @@ class ListEditorViewModel : ViewModel() {
 
     suspend fun remove(id: String, item: ListItem) = items.removeItem(id, item.id).isSuccess
 
-    suspend fun rename(id: String, name: String) = lists.renameList(id, name).isSuccess
-
-    suspend fun delete(id: String) = lists.deleteList(id).getOrDefault(false)
-
     suspend fun members(id: String) = sharing.members(id)
 }

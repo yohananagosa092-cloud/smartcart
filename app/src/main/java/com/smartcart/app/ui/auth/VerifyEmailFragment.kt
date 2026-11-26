@@ -5,6 +5,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.text.BidiFormatter
 import androidx.core.text.TextDirectionHeuristicsCompat
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -16,6 +17,7 @@ import com.smartcart.app.viewmodel.auth.VerifyOutcome
 
 class VerifyEmailFragment : Fragment(R.layout.fragment_verify_email) {
     private val viewModel: VerifyEmailViewModel by viewModels()
+    private var awaitingVerification = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         view.findViewById<View>(R.id.auth_header_back).setOnClickListener { findNavController().popBackStack() }
@@ -26,6 +28,13 @@ class VerifyEmailFragment : Fragment(R.layout.fragment_verify_email) {
         val masked = BidiFormatter.getInstance(true)
             .unicodeWrap(viewModel.maskedEmail(), TextDirectionHeuristicsCompat.LTR)
         email.text = getString(R.string.auth_verify_masked, masked)
+        fun showPending() {
+            awaitingVerification = true
+            view.findViewById<View>(R.id.auth_verify_icon).isVisible = false
+            view.findViewById<TextView>(R.id.auth_verify_heading).setText(R.string.auth_verify_pending)
+            email.setText(R.string.auth_verify_pending_detail)
+        }
+        if (savedInstanceState?.getBoolean("awaitingVerification") == true) showPending()
 
         verify.setOnClickListener { viewModel.verify() }
         resend.setOnClickListener { viewModel.resend() }
@@ -57,12 +66,17 @@ class VerifyEmailFragment : Fragment(R.layout.fragment_verify_email) {
                 when (it) {
                     VerifyOutcome.VERIFIED -> findNavController().navigate(R.id.action_verifyEmail_to_home)
                     VerifyOutcome.DELETED -> findNavController().navigate(R.id.action_verifyEmail_to_createAccount)
-                    VerifyOutcome.PENDING -> Snackbar.make(view, R.string.auth_verify_pending, Snackbar.LENGTH_LONG).show()
+                    VerifyOutcome.PENDING -> showPending()
                     VerifyOutcome.SENT -> Snackbar.make(view, R.string.auth_verify_sent, Snackbar.LENGTH_LONG).show()
                 }
             }.onFailure {
                 Snackbar.make(view, it.authErrorMessage(), Snackbar.LENGTH_LONG).show()
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean("awaitingVerification", awaitingVerification)
     }
 }

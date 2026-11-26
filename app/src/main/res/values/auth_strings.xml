@@ -34,6 +34,7 @@
     <string name="auth_reset_send">שלחי קישור איפוס</string>
     <string name="auth_reset_back">חזרה להתחברות</string>
     <string name="auth_reset_sent">אם הכתובת רשומה, יישלח אליה קישור לבחירת סיסמה חדשה.</string>
+    <string name="auth_reset_success_icon">✓</string>
     <string name="auth_verify_title">אימות מייל</string>
     <string name="auth_verify_icon">✉️</string>
     <string name="auth_verify_heading">בדקי את תיבת המייל</string>
@@ -46,5 +47,6 @@
     <string name="auth_verify_confirm">למחוק את החשבון שטרם אומת ולחזור להרשמה?</string>
     <string name="auth_verify_sent">נשלח קישור אימות חדש.</string>
     <string name="auth_verify_pending">כתובת המייל עדיין לא אומתה.</string>
+    <string name="auth_verify_pending_detail">פתחי את ההודעה שקיבלת ולחצי על הקישור. לאחר מכן חזרי לכאן.</string>
     <string name="auth_verify_confirm_delete">מחקי וחזרי להרשמה</string>
 </resources>

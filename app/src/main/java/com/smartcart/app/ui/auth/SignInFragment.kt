@@ -2,10 +2,11 @@ package com.smartcart.app.ui.auth
 
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputLayout
 import com.smartcart.app.R
 import com.smartcart.app.data.AppException
@@ -21,8 +22,10 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
         val submit = view.findViewById<View>(R.id.auth_submit)
         val alternate = view.findViewById<View>(R.id.auth_alternate)
         val forgot = view.findViewById<View>(R.id.auth_forgot)
+        val errorCard = view.findViewById<View>(R.id.auth_sign_in_error_card)
         submit.setOnClickListener {
             email.error = null
+            errorCard.isVisible = false
             viewModel.signIn(email.editText?.text.toString(), password.editText?.text.toString())
         }
         alternate.setOnClickListener {
@@ -46,10 +49,14 @@ class SignInFragment : Fragment(R.layout.fragment_sign_in) {
                 findNavController().navigate(action)
             }.onFailure { exception ->
                 val message = getString(exception.authErrorMessage())
+                listOf(R.id.auth_sign_in_brand, R.id.auth_sign_in_welcome, R.id.auth_sign_in_introduction).forEach {
+                    view.findViewById<View>(it).isVisible = false
+                }
                 if ((exception as? AppException)?.code == ErrorCode.INVALID_EMAIL) {
                     email.error = message
                 } else {
-                    Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
+                    view.findViewById<TextView>(R.id.auth_sign_in_error_text).text = message
+                    errorCard.isVisible = true
                 }
             }
         }

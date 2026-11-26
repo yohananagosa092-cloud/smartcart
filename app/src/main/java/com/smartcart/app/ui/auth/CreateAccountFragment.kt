@@ -28,8 +28,12 @@ class CreateAccountFragment : Fragment(R.layout.fragment_create_account) {
         val strengthBar = view.findViewById<LinearProgressIndicator>(R.id.auth_strength_bar)
         val strengthText = view.findViewById<TextView>(R.id.auth_strength_text)
         val terms = view.findViewById<MaterialCheckBox>(R.id.auth_terms_check)
+        val termsValidation = view.findViewById<View>(R.id.auth_terms_validation)
         val submit = view.findViewById<View>(R.id.auth_submit)
         val alternate = view.findViewById<View>(R.id.auth_alternate)
+        terms.setOnCheckedChangeListener { _, checked ->
+            if (checked) termsValidation.isVisible = false
+        }
 
         val strengthMessages = listOf(
             R.string.auth_strength_weak,
@@ -55,7 +59,7 @@ class CreateAccountFragment : Fragment(R.layout.fragment_create_account) {
                     acceptedTerms = true,
                 )
             } else {
-                Snackbar.make(view, R.string.auth_terms_error, Snackbar.LENGTH_LONG).show()
+                termsValidation.isVisible = true
             }
         }
         alternate.setOnClickListener { findNavController().popBackStack() }

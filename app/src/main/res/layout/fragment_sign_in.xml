@@ -30,6 +30,7 @@
             android:background="@color/sc_line" />
 
         <TextView
+            android:id="@+id/auth_sign_in_brand"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/auth_brand"
@@ -39,6 +40,7 @@
             android:textColor="@color/sc_mint_primary" />
 
         <TextView
+            android:id="@+id/auth_sign_in_welcome"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/auth_welcome"
@@ -46,6 +48,7 @@
             android:layout_marginTop="26dp" />
 
         <TextView
+            android:id="@+id/auth_sign_in_introduction"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/auth_intro"
@@ -73,7 +76,7 @@
                 style="@style/Widget.SmartCart.Input.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start|center_vertical"
+                android:gravity="right|center_vertical"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
                 android:autofillHints="emailAddress"
@@ -99,7 +102,7 @@
                 style="@style/Widget.SmartCart.Input.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start|center_vertical"
+                android:gravity="right|center_vertical"
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:saveEnabled="false" />
@@ -121,6 +124,14 @@
             android:text="@string/auth_sign_in"
             android:layout_marginTop="22dp"
             android:minHeight="56dp" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/auth_sign_in_error_card" style="@style/Widget.SmartCart.Card"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp"
+            android:visibility="gone" app:cardBackgroundColor="@color/sc_sun_soft" app:strokeWidth="0dp">
+            <TextView android:id="@+id/auth_sign_in_error_text" android:layout_width="match_parent"
+                android:layout_height="wrap_content" android:accessibilityLiveRegion="polite"
+                android:textAppearance="@style/TextAppearance.SmartCart.Body" android:textColor="@color/sc_warn_coral" />
+        </com.google.android.material.card.MaterialCardView>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/auth_alternate"

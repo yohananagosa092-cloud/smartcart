@@ -74,7 +74,7 @@
                 style="@style/Widget.SmartCart.Input.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start|center_vertical"
+                android:gravity="right|center_vertical"
                 android:inputType="textEmailAddress"
                 android:singleLine="true"
                 android:autofillHints="emailAddress"
@@ -101,7 +101,7 @@
                 style="@style/Widget.SmartCart.Input.EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start|center_vertical"
+                android:gravity="right|center_vertical"
                 android:inputType="textPassword"
                 android:singleLine="true"
                 android:autofillHints="newPassword"
@@ -136,6 +136,10 @@
             android:text="@string/auth_terms"
             android:textAppearance="@style/TextAppearance.SmartCart.Body" />
 
+        <TextView android:id="@+id/auth_terms_validation" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:visibility="gone" android:accessibilityLiveRegion="polite"
+            android:text="@string/auth_terms_error" android:textColor="@color/sc_warn_coral"
+            android:textAppearance="@style/TextAppearance.SmartCart.Caption" />
         <com.google.android.material.button.MaterialButton
             android:id="@+id/auth_submit"
             style="@style/Widget.SmartCart.Button.Primary" android:fontFamily="@font/rubik_semibold" android:textFontWeight="600"

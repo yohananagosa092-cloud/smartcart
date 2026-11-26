@@ -80,6 +80,9 @@
         <action
             android:id="@+id/action_home_to_profile"
             app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_home_to_invitation"
+            app:destination="@id/pendingInvitationFragment" />
     </fragment>
 
     <!-- 06 · רשימה חדשה -->
@@ -109,6 +112,12 @@
         <action
             android:id="@+id/action_listEditor_to_addProducts"
             app:destination="@id/addProductsFragment" />
+        <action
+            android:id="@+id/action_listEditor_to_budget"
+            app:destination="@id/budgetFragment" />
+        <action
+            android:id="@+id/action_listEditor_to_listAction"
+            app:destination="@id/listActionFragment" />
         <action
             android:id="@+id/action_listEditor_to_shareList"
             app:destination="@id/shareListFragment" />
@@ -177,6 +186,27 @@
     </fragment>
 
     <!-- 15 · הצטרפות לרשימה -->
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="com.smartcart.app.ui.lists.BudgetFragment"
+        tools:layout="@layout/fragment_budget" />
+
+    <fragment
+        android:id="@+id/listActionFragment"
+        android:name="com.smartcart.app.ui.lists.ListActionFragment"
+        tools:layout="@layout/fragment_list_action" />
+
+    <fragment
+        android:id="@+id/pendingInvitationFragment"
+        android:name="com.smartcart.app.ui.sharing.PendingInvitationFragment"
+        tools:layout="@layout/fragment_pending_invitation">
+        <action
+            android:id="@+id/action_invitation_to_editor"
+            app:destination="@id/listEditorFragment"
+            app:popUpTo="@id/pendingInvitationFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
+
     <fragment
         android:id="@+id/joinListFragment"
         android:name="com.smartcart.app.ui.sharing.JoinListFragment"

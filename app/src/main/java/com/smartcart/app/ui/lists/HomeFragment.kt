@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -37,6 +38,19 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             view.findViewById<View>(it).setOnClickListener { navigate(R.id.action_home_to_profile) }
         }
         view.findViewById<View>(R.id.home_counts).setOnClickListener { navigate(R.id.action_home_to_myLists) }
+
+        val invitationCard = view.findViewById<View>(R.id.home_invitation)
+        viewLifecycleOwner.lifecycleScope.launch {
+            val invitation = model.pendingInvitations().getOrNull()?.firstOrNull() ?: return@launch
+            view.findViewById<TextView>(R.id.home_invitation_title).text =
+                getString(R.string.invitation_from, invitation.ownerName)
+            view.findViewById<TextView>(R.id.home_invitation_detail).text =
+                getString(R.string.invitation_list, invitation.listName)
+            invitationCard.isVisible = true
+            invitationCard.setOnClickListener {
+                findNavController().navigate(R.id.action_home_to_invitation, bundleOf("token" to invitation.token))
+            }
+        }
 
         val recent = view.findViewById<View>(R.id.btn_to_list_editor)
         recent.isEnabled = false

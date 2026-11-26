@@ -2,14 +2,26 @@
 <resources>
     <string name="list_barcode_digits">הזיני את ספרות הברקוד</string>
     <string name="list_add_title">הוסיפי לרשימה</string>
+    <string name="list_products_title">הוספת מוצרים</string>
     <string name="list_search">חיפוש מוצר</string>
     <string name="list_search_tab">חיפוש</string>
     <string name="list_barcode_tab">ברקוד</string>
-    <string name="list_free_tab">חופשי</string>
+    <string name="list_free_tab">פריט חופשי</string>
     <string name="list_search_help">הקלידי לפחות 2 אותיות</string>
     <string name="list_free_fallback">לא מצאת? הוסיפי כפריט חופשי</string>
     <string name="list_done">סיימתי, חזרה לרשימה</string>
     <string name="list_free_name">שם הפריט</string>
+    <string name="list_free_quantity">כמות</string>
+    <string name="list_default_quantity">1</string>
+    <string name="list_free_note">הערה (לא חובה)</string>
+    <string name="list_quantity_invalid">הזיני כמות בין 1 ל־999</string>
+    <string name="list_add_to_list">הוספה לרשימה</string>
+    <string name="list_empty_detail">אפשר להוסיף את החיפוש כפריט חופשי. השם יועתק אוטומטית לטופס.</string>
+    <string name="list_free_from_query">הוספת ״%1$s״ כפריט חופשי</string>
+    <string name="list_camera_heading">סרקי את הברקוד שעל האריזה</string>
+    <string name="list_camera_placeholder">מצלמה</string>
+    <string name="list_camera_open_settings">פתחי את הגדרות המצלמה</string>
+    <string name="list_camera_search">אין הרשאה? אפשר לחפש לפי שם</string>
     <string name="list_free_help">פריט חופשי נשמר ברשימה ואינו משתתף בהשוואה.</string>
     <string name="list_add">הוסיפי פריט</string>
     <string name="list_add_product">הוסיפי את %1$s</string>
@@ -19,7 +31,7 @@
     <string name="list_write_error">השינוי לא נשמר. בדקי את החיבור וההרשאות ונסי שוב.</string>
     <string name="list_write_ok">הפריט נוסף לרשימה.</string>
     <string name="list_camera_permission">כדי לסרוק ברקוד, אפשרי גישה למצלמה.</string>
-    <string name="list_camera_retry">אפשרי מצלמה</string>
+    <string name="list_camera_retry">מתן הרשאה למצלמה</string>
     <string name="list_camera_error">המצלמה אינה זמינה. אפשר להקליד את הברקוד.</string>
     <string name="list_scan_again">סרקי שוב</string>
     <string name="list_barcode_input">הקלידי ברקוד</string>

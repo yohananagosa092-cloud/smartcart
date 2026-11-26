@@ -10,6 +10,27 @@
                 <TextView android:id="@+id/home_avatar" style="@style/Widget.SmartCart.Avatar" android:layout_width="30dp" android:layout_height="30dp" android:importantForAccessibility="yes" android:contentDescription="@string/sc_profile" />
                 <TextView android:id="@+id/home_greeting" android:layout_width="match_parent" android:layout_height="wrap_content"  android:fontFamily="@font/rubik_semibold" android:textFontWeight="600" android:textAppearance="@style/TextAppearance.SmartCart.TitleLarge" android:layout_marginStart="18dp" />
             </LinearLayout>
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/home_invitation"
+                style="@style/Widget.SmartCart.Card"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:visibility="gone"
+                app:cardBackgroundColor="@color/sc_sun_soft"
+                app:strokeWidth="0dp">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="60dp"
+                    android:orientation="vertical" android:gravity="center_vertical">
+                    <TextView android:id="@+id/home_invitation_title" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:textAppearance="@style/TextAppearance.SmartCart.TitleMedium"
+                        android:textColor="@color/sc_sun_accent" />
+                    <TextView android:id="@+id/home_invitation_detail" android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:layout_marginTop="8dp"
+                        android:textAppearance="@style/TextAppearance.SmartCart.Body" android:textColor="@color/sc_sun_accent" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
             <com.google.android.material.card.MaterialCardView android:id="@+id/home_counts" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" style="@style/Widget.SmartCart.Card" android:clickable="true" android:focusable="true">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="76dp" android:gravity="center_vertical">
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">

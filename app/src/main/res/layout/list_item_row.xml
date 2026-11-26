@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp" style="@style/Widget.SmartCart.Card">
+<com.smartcart.app.ui.components.SwipeRevealCard xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginBottom="10dp"
+    android:clickable="true" style="@style/Widget.SmartCart.Card">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="58dp" android:gravity="center_vertical">
         <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -10,5 +11,11 @@
         </LinearLayout>
         <com.smartcart.app.ui.components.QuantitySelectorView android:id="@+id/list_row_quantity"
             android:layout_width="wrap_content" android:layout_height="wrap_content" android:saveEnabled="false" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/list_row_remove" style="@style/Widget.SmartCart.Button.Primary"
+            android:layout_width="wrap_content" android:layout_height="48dp"
+            android:layout_marginStart="8dp" android:minWidth="0dp" android:visibility="gone"
+            android:backgroundTint="@color/sc_warn_coral" android:text="@string/editor_swipe_delete"
+            android:textColor="@color/sc_on_accent" />
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</com.smartcart.app.ui.components.SwipeRevealCard>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="editor_empty_spacing">84dp</dimen>
+    <string name="invitation_from">הזמנה מ%1$s</string>
+    <string name="invitation_list">לרשימה ״%1$s״ · לצפייה ‹</string>
+    <string name="invitation_title">הזמנה לרשימה</string>
+    <string name="invitation_heading">%1$s הזמינה אותך להצטרף</string>
+    <string name="invitation_description">%1$s\n%2$d פריטים\nמשתתפות: %3$s</string>
+    <string name="invitation_benefits">אם תצטרפי תוכלי:\n\n• לצפות ברשימה\n• להוסיף ולמחוק פריטים\n• לערוך כמויות והערות\n• להשוות מחירים בין רשתות</string>
+    <string name="invitation_accept">הצטרפי לרשימה</string>
+    <string name="invitation_decline">דחי את ההזמנה</string>
+    <string name="invitation_unavailable">ההזמנה אינה זמינה</string>
+    <string name="budget_title">הגדירי תקציב</string>
+    <string name="budget_question">כמה תרצי להוציא?</string>
+    <string name="budget_amount">סכום בשקלים</string>
+    <string name="budget_range">סכום שלם מ־1 עד 10,000 ₪</string>
+    <string name="budget_save">שמרי תקציב</string>
+    <string name="budget_150">150</string>
+    <string name="budget_250">250</string>
+    <string name="budget_400">400</string>
+    <string name="budget_600">600</string>
+    <string name="budget_current_total">השוואה אחרונה · %1$s · %2$.2f ₪</string>
+    <string name="budget_not_owner">רק בעלת הרשימה יכולה לשנות את התקציב</string>
+    <string name="editor_add_first">הוסיפי מוצרים</string>
+    <string name="editor_empty_title">הרשימה שלך מוכנה</string>
+    <string name="editor_empty_explanation">הוסיפי מוצר ראשון כדי להתחיל. מוצרים חופשיים אינם נכללים בהשוואה.</string>
+    <string name="editor_swipe_delete">מחיקה</string>
+    <string name="list_rename_title">שינוי שם הרשימה</string>
+    <string name="list_save_name">שמירת השם</string>
+    <string name="list_delete_title">למחוק את %1$s?</string>
+    <string name="list_delete_warning">הרשימה תימחק גם אצל כל המשתתפות בה.</string>
+</resources>

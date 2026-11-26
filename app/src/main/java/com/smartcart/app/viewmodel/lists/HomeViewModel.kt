@@ -7,4 +7,6 @@ class HomeViewModel : ViewModel() {
     fun displayName(): String = ServiceLocator.authRepository.currentUser()?.displayName.orEmpty()
 
     suspend fun ownedLists() = ServiceLocator.listRepository.ownedLists()
+
+    suspend fun pendingInvitations() = ServiceLocator.sharingRepository.pendingInvitations()
 }

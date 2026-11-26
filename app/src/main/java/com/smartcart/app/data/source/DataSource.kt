@@ -39,6 +39,7 @@ interface DataSource {
     suspend fun getList(listId: String): ShoppingList?
     suspend fun createList(name: String, ownerUid: String): ShoppingList
     suspend fun renameList(listId: String, name: String)
+    suspend fun updateBudget(listId: String, amount: Int)
 
     // ---------- items ----------
     suspend fun getItems(listId: String): List<ListItem>
@@ -85,6 +86,8 @@ interface DataSource {
 
     // ---------- inviteLinks ----------
     suspend fun getInviteLink(token: String): InviteLink?
+    suspend fun pendingInvitations(): List<InviteLink>
+    suspend fun respondToPendingInvitation(token: String, accept: Boolean): String?
 
     // ---------- פונקציות הענן מסוג callable (פרק 14.1) ----------
     suspend fun compareBasket(listId: String, comparisonId: String): ComparisonStatus
