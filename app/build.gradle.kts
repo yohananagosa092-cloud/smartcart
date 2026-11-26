@@ -52,4 +52,12 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+
+    constraints {
+        // Guava מגיעה דרך Firestore (gRPC) בגרסה 32.1.3, שיש בה פרצה ידועה.
+        // מכריחים את הגרסה המתוקנת.
+        implementation(libs.guava) {
+            because("SNYK-JAVA-COMGOOGLEGUAVA-20825054 is fixed in Guava 33.7.2")
+        }
+    }
 }
