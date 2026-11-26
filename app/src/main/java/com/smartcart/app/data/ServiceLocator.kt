@@ -10,6 +10,7 @@ import com.smartcart.app.data.repository.SharingRepository
 import com.smartcart.app.data.repository.UserRepository
 import com.smartcart.app.data.source.DataSource
 import com.smartcart.app.data.source.FakeDataSource
+import com.smartcart.app.data.source.FirestoreDataSource
 
 /**
  * המקום היחיד שבו נבחר מקור הנתונים, ומכאן ה-ViewModels מקבלים את ה-Repositories.
@@ -17,7 +18,16 @@ import com.smartcart.app.data.source.FakeDataSource
  */
 object ServiceLocator {
 
-    private val dataSource: DataSource by lazy { FakeDataSource() }
+    /**
+     * true = הרשימות והפריטים נשמרים ב-Firestore (משימה 18); כל השאר עדיין מנתוני הדמה.
+     * כבוי עד שכללי האבטחה של shoppingLists ו-items יעלו לפרויקט (משימה 28 של הודיה),
+     * כי בלעדיהם Firestore דוחה כל קריאה וכתיבה. כשהם עולים, משנים כאן ל-true.
+     */
+    private const val USE_FIRESTORE = false
+
+    private val dataSource: DataSource by lazy {
+        if (USE_FIRESTORE) FirestoreDataSource(demo = FakeDataSource()) else FakeDataSource()
+    }
 
     /** האימות כבר עובד מול Firebase Authentication של הפרויקט (משימה 12). */
     val authRepository by lazy { AuthRepository(FirebaseAuthService()) }
