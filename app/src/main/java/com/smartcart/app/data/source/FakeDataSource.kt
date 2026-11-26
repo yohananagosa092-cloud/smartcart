@@ -114,13 +114,24 @@ class FakeDataSource(
     }
 
     override suspend fun updateItem(listId: String, item: ListItem) {
+        updateStoredItem(listId, item.id) { item }
+    }
+
+    override suspend fun updateItemQuantity(listId: String, item: ListItem) {
+        updateStoredItem(listId, item.id) { it.copy(quantity = item.quantity) }
+    }
+
+    override suspend fun updateItemNote(listId: String, item: ListItem) {
+        updateStoredItem(listId, item.id) { it.copy(note = item.note) }
+    }
+
+    private suspend fun updateStoredItem(listId: String, itemId: String, update: (ListItem) -> ListItem) {
         network()
         requireMember(listId)
         val listItems = items.getValue(listId)
-        if (item.id in listItems) {
-            listItems[item.id] = item.copy(updatedAt = now())
-            onItemWritten(listId)
-        }
+        val stored = listItems[itemId] ?: return
+        listItems[itemId] = update(stored).copy(updatedAt = now())
+        onItemWritten(listId)
     }
 
     override suspend fun deleteItem(listId: String, itemId: String) {

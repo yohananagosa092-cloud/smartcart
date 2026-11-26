@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.Flow
 /** רשימות הקניות (מסכים 05, 06, 08, 09, 16). */
 class ListRepository(private val dataSource: DataSource) {
 
+    fun isOwner(list: ShoppingList): Boolean = list.ownerUid == dataSource.currentUid()
+
     /** כל הרשימות שהמשתמשת משתתפת בהן, מהחדשה לישנה (מסכים 05, 16). */
     suspend fun myLists(): Result<List<ShoppingList>> = safeCall {
         dataSource.getListsForMember(dataSource.requireUid())

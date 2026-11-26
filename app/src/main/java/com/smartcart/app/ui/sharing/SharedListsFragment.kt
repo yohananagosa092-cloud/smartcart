@@ -23,8 +23,8 @@ class SharedListsFragment : Fragment(R.layout.fragment_shared_lists) {
         viewModel.title.observe(viewLifecycleOwner) { title.text = it }
 
         openStoredList(view.findViewById(R.id.btn_to_list_editor), R.id.action_sharedLists_to_listEditor) {
-            val uid = ServiceLocator.authRepository.currentUser()?.uid
-            ServiceLocator.listRepository.myLists().map { lists -> lists.filter { it.ownerUid != uid } }
+            val repository = ServiceLocator.listRepository
+            repository.myLists().map { lists -> lists.filterNot(repository::isOwner) }
         }
         view.findViewById<View>(R.id.btn_to_join_list).setOnClickListener {
             findNavController().navigate(R.id.action_sharedLists_to_joinList)

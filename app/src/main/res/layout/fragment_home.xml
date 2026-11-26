@@ -7,10 +7,10 @@
     <TextView  android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="start|center_vertical" android:textAlignment="viewStart" android:text="@string/app_name" android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Headline"  />
 </LinearLayout><View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/sc_line" />
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="18dp" android:gravity="center_vertical">
-                <TextView android:id="@+id/home_avatar" style="@style/Widget.SmartCart.Avatar" android:layout_width="30dp" android:layout_height="30dp" />
+                <TextView android:id="@+id/home_avatar" style="@style/Widget.SmartCart.Avatar" android:layout_width="30dp" android:layout_height="30dp" android:importantForAccessibility="yes" android:contentDescription="@string/sc_profile" />
                 <TextView android:id="@+id/home_greeting" android:layout_width="match_parent" android:layout_height="wrap_content"  android:fontFamily="@font/rubik_semibold" android:textFontWeight="600" android:textAppearance="@style/TextAppearance.SmartCart.TitleLarge" android:layout_marginStart="18dp" />
             </LinearLayout>
-            <com.google.android.material.card.MaterialCardView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="26dp" style="@style/Widget.SmartCart.Card">
+            <com.google.android.material.card.MaterialCardView android:id="@+id/home_counts" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp" style="@style/Widget.SmartCart.Card" android:clickable="true" android:focusable="true">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="76dp" android:gravity="center_vertical">
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
     <TextView android:id="@+id/home_created" android:layout_width="match_parent" android:layout_height="wrap_content"  android:fontFamily="@font/rubik_bold" android:textFontWeight="700" android:textAppearance="@style/TextAppearance.SmartCart.Headline" android:gravity="center" android:textColor="@color/sc_mint_primary" />

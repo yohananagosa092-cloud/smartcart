@@ -1,5 +1,7 @@
 package com.smartcart.app.data
 
+import com.smartcart.app.BuildConfig
+
 import com.smartcart.app.data.auth.AuthRepository
 import com.smartcart.app.data.auth.FirebaseAuthService
 import com.smartcart.app.data.repository.ComparisonRepository
@@ -14,12 +16,13 @@ import com.smartcart.app.data.source.FirestoreDataSource
 
 /**
  * המקום היחיד שבו נבחר מקור הנתונים, ומכאן ה-ViewModels מקבלים את ה-Repositories.
- * מסכי הרשימות והקטלוג משתמשים ב-Firestore.
+ * בניית Debug משתמשת בנתוני הדמה כברירת מחדל. אימות החשבון נפרד ממקור זה.
  */
 object ServiceLocator {
 
     private val dataSource: DataSource by lazy {
-        FirestoreDataSource(demo = FakeDataSource())
+        val demo = FakeDataSource()
+        if (BuildConfig.USE_FIRESTORE) FirestoreDataSource(demo = demo) else demo
     }
 
     /** האימות כבר עובד מול Firebase Authentication של הפרויקט (משימה 12). */

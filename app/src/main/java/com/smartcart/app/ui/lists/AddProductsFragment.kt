@@ -65,6 +65,8 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
                 view.findViewById<View>(R.id.product_preview).isVisible = false
                 view.findViewById<View>(R.id.product_scan_again).isVisible = true
                 model.scan(barcode)
+            } else {
+                manual.error = getString(R.string.list_barcode_digits)
             }
         }
         addFree.setOnClickListener {
@@ -117,6 +119,7 @@ class AddProductsFragment : Fragment(R.layout.fragment_add_products) {
                         }
                         status.isVisible = message != null
                         message?.let(status::setText)
+                        fallback.isVisible = tabs.selectedTabPosition == 0 && state.empty
                         results.removeAllViews()
                         state.products.forEach { product ->
                             val row = layoutInflater.inflate(R.layout.list_product_row, results, false)

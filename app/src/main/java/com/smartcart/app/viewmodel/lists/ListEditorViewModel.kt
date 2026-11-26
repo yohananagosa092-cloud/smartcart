@@ -30,12 +30,11 @@ class ListEditorViewModel : ViewModel() {
         observation?.cancel()
         _failed.value = false
         _itemsError.value = null
-        val uid = ServiceLocator.authRepository.currentUser()?.uid
         observation = viewModelScope.launch {
             val entriesFlow = items.observeItems(id).onStart { emit(emptyList()) }
                 .catch { _itemsError.value = it }
             combine(lists.observeList(id), entriesFlow) { list, entries ->
-                State(list, entries, uid != null && list?.ownerUid == uid)
+                State(list, entries, list?.let(lists::isOwner) == true)
             }.catch { _failed.value = true }.collect { _state.value = it }
         }
     }

@@ -79,6 +79,26 @@ class DataLayerTest {
     }
 
     @Test
+    fun editingAStaleRowKeepsTheOtherFieldAndRespectsListOwnership() = runBlocking {
+        val list = lists.createList("קניות").getOrThrow()
+        val original = items.addProduct(list.id, product("חלב")).getOrThrow()
+        assertEquals(true, lists.isOwner(list))
+
+        items.changeQuantity(list.id, original, 3).getOrThrow()
+        items.changeNote(list.id, original, "ללא לקטוז").getOrThrow()
+        val saved = items.items(list.id).getOrThrow().single()
+        assertEquals(3, saved.quantity)
+        assertEquals("ללא לקטוז", saved.note)
+
+        lists.renameList(list.id, "סוף שבוע").getOrThrow()
+        assertEquals("סוף שבוע", lists.getList(list.id).getOrThrow()?.name)
+        items.removeItem(list.id, saved.id).getOrThrow()
+        assertEquals(0, lists.getList(list.id).getOrThrow()?.itemCount)
+        assertEquals(true, lists.deleteList(list.id).getOrThrow())
+        assertNull(lists.getList(list.id).getOrThrow())
+    }
+
+    @Test
     fun quantityOutsideTheRangeIsRejected() = runBlocking {
         val list = lists.createList("קניות").getOrThrow()
         val item = items.addProduct(list.id, product("חלב")).getOrThrow()

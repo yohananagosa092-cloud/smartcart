@@ -4,6 +4,9 @@ plugins {
 }
 
 android {
+    buildFeatures {
+        buildConfig = true
+    }
     namespace = "com.smartcart.app"
     compileSdk {
         version = release(37)
@@ -20,7 +23,14 @@ android {
     }
 
     buildTypes {
+        debug {
+            val useFirestore = providers.gradleProperty("smartcart.useFirestore")
+                .map { it.toBooleanStrict() }
+                .getOrElse(false)
+            buildConfigField("boolean", "USE_FIRESTORE", useFirestore.toString())
+        }
         release {
+            buildConfigField("boolean", "USE_FIRESTORE", "true")
             optimization {
                 enable = true
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")

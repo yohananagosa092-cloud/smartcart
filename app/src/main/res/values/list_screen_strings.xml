@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="list_barcode_digits">הזיני את ספרות הברקוד</string>
     <string name="list_add_title">הוסיפי לרשימה</string>
     <string name="list_search">חיפוש מוצר</string>
     <string name="list_search_tab">חיפוש</string>

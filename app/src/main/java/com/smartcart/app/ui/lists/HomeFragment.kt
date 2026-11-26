@@ -33,7 +33,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             view.findViewById<View>(it).setOnClickListener { navigate(R.id.action_home_to_myLists) }
         }
         view.findViewById<View>(R.id.btn_to_shared_lists).setOnClickListener { navigate(R.id.action_home_to_sharedLists) }
-        view.findViewById<View>(R.id.btn_to_profile).setOnClickListener { navigate(R.id.action_home_to_profile) }
+        listOf(R.id.btn_to_profile, R.id.home_avatar).forEach {
+            view.findViewById<View>(it).setOnClickListener { navigate(R.id.action_home_to_profile) }
+        }
+        view.findViewById<View>(R.id.home_counts).setOnClickListener { navigate(R.id.action_home_to_myLists) }
 
         val recent = view.findViewById<View>(R.id.btn_to_list_editor)
         recent.isEnabled = false
