@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="list_barcode_digits">הזיני את ספרות הברקוד</string>
     <string name="list_add_title">הוסיפי לרשימה</string>
     <string name="list_products_title">הוספת מוצרים</string>
     <string name="list_search">חיפוש מוצר</string>
     <string name="list_search_tab">חיפוש</string>
-    <string name="list_barcode_tab">ברקוד</string>
     <string name="list_free_tab">פריט חופשי</string>
     <string name="list_search_help">הקלידי לפחות 2 אותיות</string>
     <string name="list_free_fallback">לא מצאת? הוסיפי כפריט חופשי</string>
@@ -18,10 +16,6 @@
     <string name="list_add_to_list">הוספה לרשימה</string>
     <string name="list_empty_detail">אפשר להוסיף את החיפוש כפריט חופשי. השם יועתק אוטומטית לטופס.</string>
     <string name="list_free_from_query">הוספת ״%1$s״ כפריט חופשי</string>
-    <string name="list_camera_heading">סרקי את הברקוד שעל האריזה</string>
-    <string name="list_camera_placeholder">מצלמה</string>
-    <string name="list_camera_open_settings">פתחי את הגדרות המצלמה</string>
-    <string name="list_camera_search">אין הרשאה? אפשר לחפש לפי שם</string>
     <string name="list_free_help">פריט חופשי נשמר ברשימה ואינו משתתף בהשוואה.</string>
     <string name="list_add">הוסיפי פריט</string>
     <string name="list_add_product">הוסיפי את %1$s</string>
@@ -30,12 +24,6 @@
     <string name="list_lookup_error">לא ניתן לטעון את הקטלוג. נסי שוב.</string>
     <string name="list_write_error">השינוי לא נשמר. בדקי את החיבור וההרשאות ונסי שוב.</string>
     <string name="list_write_ok">הפריט נוסף לרשימה.</string>
-    <string name="list_camera_permission">כדי לסרוק ברקוד, אפשרי גישה למצלמה.</string>
-    <string name="list_camera_retry">מתן הרשאה למצלמה</string>
-    <string name="list_camera_error">המצלמה אינה זמינה. אפשר להקליד את הברקוד.</string>
-    <string name="list_scan_again">סרקי שוב</string>
-    <string name="list_barcode_input">הקלידי ברקוד</string>
-    <string name="list_barcode_lookup">חפשי ברקוד</string>
     <string name="list_editor_title">עריכת רשימה</string>
     <string name="list_share">שיתוף</string>
     <string name="list_compare">השווי בין רשתות</string>
@@ -45,8 +33,8 @@
     <string name="list_budget_left">נותרו %1$.2f ₪ לפי ההשוואה האחרונה</string>
     <string name="list_budget_over">חריגה של %1$.2f ₪ לפי ההשוואה האחרונה</string>
     <string name="list_note">הוסיפי הערה</string>
-    <string name="list_edit_note">ערכי הערה</string>
-    <string name="list_save">שמרי</string>
+    <string name="list_note_heading">הערה לפריט</string>
+    <string name="list_note_save">שמירת הערה</string>
     <string name="list_rename">שינוי שם</string>
     <string name="list_delete">מחיקת רשימה</string>
     <string name="list_remove">מחיקת פריט</string>

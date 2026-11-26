@@ -1,12 +1,6 @@
 package com.smartcart.app
 
-import android.Manifest
-import android.accessibilityservice.AccessibilityServiceInfo
-import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
 import android.os.SystemClock
 import android.view.View
 import android.view.MotionEvent
@@ -15,163 +9,20 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.navigation.fragment.NavHostFragment
-import androidx.camera.view.PreviewView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.textfield.TextInputLayout
-import com.google.android.gms.tasks.Tasks
-import com.google.mlkit.vision.barcode.BarcodeScanning
-import com.google.mlkit.vision.common.InputImage
 import com.smartcart.app.ui.components.QuantitySelectorView
-import com.smartcart.app.data.repository.ProductRepository
-import com.smartcart.app.data.source.FakeDataSource
 import java.io.File
-import java.util.concurrent.TimeUnit
-import kotlinx.coroutines.runBlocking
-import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class DemoListFlowTest {
-    @Test
-    fun cameraFramesDetectAndAddProduct() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
-        assumeTrue(InstrumentationRegistry.getArguments().getString("fixtureCamera") == "true")
-        assumeFalse(BuildConfig.USE_FIRESTORE)
-        instrumentation.uiAutomation.grantRuntimePermission(
-            instrumentation.targetContext.packageName, Manifest.permission.CAMERA,
-        )
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
-            scenario.onActivity {
-                val nav = (it.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-                    .navController
-                nav.navigate(R.id.homeFragment)
-            }
-            scenario.await { findViewById<View>(R.id.btn_to_new_list) != null }
-            scenario.click(R.id.btn_to_new_list)
-            scenario.await { findViewById<View>(R.id.new_weekend) != null }
-            scenario.click(R.id.new_weekend)
-            scenario.click(R.id.new_list_create)
-            scenario.await { findViewById<View>(R.id.editor_add)?.isEnabled == true }
-            scenario.click(R.id.editor_add)
-            scenario.await { findViewById<TabLayout>(R.id.product_tabs) != null }
-            scenario.selectProductTab(1)
-            try {
-                scenario.await(timeoutMs = 25_000) {
-                    findViewById<TextView>(R.id.list_row_name)?.text?.toString() == "חלב 3% שומן"
-                }
-            } catch (failure: AssertionError) {
-                capture("07-camera-fixture-preview")
-                throw failure
-            }
-            capture("07-camera-scan")
-            scenario.click(R.id.list_row_add)
-            scenario.await {
-                findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.text ==
-                    getString(R.string.list_write_ok)
-            }
-            scenario.click(R.id.product_done)
-            scenario.await { findViewById<QuantitySelectorView>(R.id.list_row_quantity)?.value == 1 }
-        }
-    }
-
-    @Test
-    fun decodesCatalogEan13FromImage() {
-        val pattern = "101" + "0001101".repeat(6) + "01010" +
-            "1110010".repeat(4) + "1100110" + "1000100" + "101"
-        val moduleWidth = 6
-        val barcode = Bitmap.createBitmap((pattern.length + 24) * moduleWidth, 300, Bitmap.Config.ARGB_8888)
-        try {
-            val canvas = Canvas(barcode)
-            canvas.drawColor(Color.WHITE)
-            val paint = Paint().apply { color = Color.BLACK }
-            pattern.forEachIndexed { index, bit ->
-                if (bit == '1') {
-                    val x = ((index + 12) * moduleWidth).toFloat()
-                    canvas.drawRect(x, 30f, x + moduleWidth, 270f, paint)
-                }
-            }
-            BarcodeScanning.getClient().use { scanner ->
-                val decoded = Tasks.await(scanner.process(InputImage.fromBitmap(barcode, 0)), 15, TimeUnit.SECONDS)
-                val detected = requireNotNull(decoded.single().rawValue)
-                val resolved = runBlocking { ProductRepository(FakeDataSource(delayMs = 0)).findBarcode(detected) }
-                assertEquals("0000000000017", resolved.getOrThrow()?.barcode)
-            }
-        } finally {
-            barcode.recycle()
-        }
-    }
-
-    @Test
-    fun cameraDenialKeepsRetryAndSearchAvailable() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
-        val context = instrumentation.targetContext
-        assumeFalse(BuildConfig.USE_FIRESTORE)
-        assumeFalse(context.checkSelfPermission(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)
-        context.getSharedPreferences("smartcart_permissions", 0).edit().remove("camera_requested").commit()
-        ActivityScenario.launch(MainActivity::class.java).use { scenario ->
-            scenario.onActivity {
-                val nav = (it.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment)
-                    .navController
-                nav.navigate(R.id.homeFragment)
-            }
-            scenario.await { findViewById<View>(R.id.btn_to_list_editor)?.isEnabled == true }
-            scenario.click(R.id.btn_to_list_editor)
-            scenario.await { findViewById<View>(R.id.editor_add)?.isEnabled == true }
-            scenario.click(R.id.editor_add)
-            scenario.await { findViewById<TabLayout>(R.id.product_tabs) != null }
-            scenario.selectProductTab(1)
-            denyPermissionDialog()
-            scenario.await { findViewById<View>(R.id.product_camera_permission)?.visibility == View.VISIBLE }
-            capture("07-camera-denied")
-            scenario.click(R.id.product_camera_permission)
-            denyPermissionDialog()
-            scenario.await {
-                findViewById<TextView>(R.id.product_camera_permission)?.text == getString(R.string.list_camera_open_settings)
-            }
-            scenario.click(R.id.product_camera_search)
-            scenario.setText(R.id.product_query, "חלב")
-            scenario.await { findViewById<View>(R.id.list_row_add) != null }
-        }
-    }
-
-    private fun denyPermissionDialog() {
-        val automation = InstrumentationRegistry.getInstrumentation().uiAutomation
-        automation.serviceInfo = automation.serviceInfo.apply {
-            flags = flags or AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
-                AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
-        }
-        val deadline = SystemClock.elapsedRealtime() + 10_000
-        val observedPackages = mutableSetOf<String>()
-        val controls = mutableSetOf<String>()
-        fun findDecline(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
-            val id = node.viewIdResourceName.orEmpty()
-            val label = node.text?.toString().orEmpty()
-            if (node.isClickable) controls.add("$id/$label")
-            if (node.isClickable && (id.contains("deny", ignoreCase = true) ||
-                    label.replace('’', '\'').equals("Don't allow", ignoreCase = true))) return node
-            return (0 until node.childCount).firstNotNullOfOrNull { node.getChild(it)?.let(::findDecline) }
-        }
-        while (SystemClock.elapsedRealtime() < deadline) {
-            val roots = automation.windows.mapNotNull { it.root } + listOfNotNull(automation.rootInActiveWindow)
-            for (root in roots) {
-                val pkg = root.packageName?.toString() ?: continue
-                observedPackages.add(pkg)
-                if (!pkg.endsWith(".permissioncontroller")) continue
-                val deny = findDecline(root)
-                if (deny?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true) return
-            }
-            SystemClock.sleep(100)
-        }
-        throw AssertionError("No decline action in Android camera dialog. Windows: $observedPackages. Controls: $controls")
-    }
-
     @Test
     fun rendersAuthScreensAndValidatesAnInvalidEmailLocally() {
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
@@ -217,10 +68,6 @@ class DemoListFlowTest {
     @Test
     fun createsListAndAddsCatalogAndFreeItems() {
         assumeFalse(BuildConfig.USE_FIRESTORE)
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
-        instrumentation.uiAutomation.grantRuntimePermission(
-            instrumentation.targetContext.packageName, Manifest.permission.CAMERA,
-        )
         ActivityScenario.launch(MainActivity::class.java).use { scenario ->
             scenario.onActivity { activity ->
                 val host = activity.supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
@@ -250,6 +97,7 @@ class DemoListFlowTest {
             capture("08-empty-editor")
             scenario.click(R.id.editor_add)
             scenario.await { findViewById<EditText>(R.id.product_query) != null }
+            scenario.onActivity { assertTrue(it.findViewById<TabLayout>(R.id.product_tabs).tabCount == 2) }
             scenario.setText(R.id.product_query, "ח")
             scenario.onActivity { assertTrue(it.findViewById<LinearLayout>(R.id.product_results).childCount == 0) }
             scenario.onActivity { it.findViewById<EditText>(R.id.product_query).setText("חלב") }
@@ -260,19 +108,7 @@ class DemoListFlowTest {
                 findViewById<TextView>(com.google.android.material.R.id.snackbar_text)?.text ==
                     getString(R.string.list_write_ok)
             }
-            scenario.selectProductTab(1)
-            scenario.await {
-                findViewById<PreviewView>(R.id.product_preview)?.previewStreamState?.value ==
-                    PreviewView.StreamState.STREAMING
-            }
-            scenario.click(R.id.product_barcode_lookup)
-            scenario.await { findViewById<EditText>(R.id.product_barcode)?.error != null }
-            scenario.setText(R.id.product_barcode, "0000000000017")
-            scenario.click(R.id.product_barcode_lookup)
-            scenario.await { findViewById<View>(R.id.list_row_add) != null }
-            capture("07-manual-barcode")
             scenario.click(R.id.list_row_add)
-            scenario.selectProductTab(0)
             scenario.setText(R.id.product_query, "פטרוזיליה")
             scenario.await { findViewById<View>(R.id.product_fallback)?.visibility == View.VISIBLE }
             capture("07-no-results")
@@ -300,12 +136,10 @@ class DemoListFlowTest {
                 quantity?.isEnabled == true && quantity.value == 3
             }
             scenario.click(R.id.list_row_detail)
-            val noteField = findNode { it.className?.toString() == EditText::class.java.name }
-            assertTrue(noteField.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, android.os.Bundle().apply {
-                putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, "ללא לקטוז")
-            }))
+            scenario.await { findViewById<View>(R.id.editor_note_panel)?.visibility == View.VISIBLE }
+            scenario.setText(R.id.editor_note_input, "ללא לקטוז")
             capture("08-note")
-            clickText(R.string.list_save)
+            scenario.click(R.id.editor_note_save)
             scenario.await { findViewById<TextView>(R.id.list_row_detail)?.text?.toString() == "ללא לקטוז" }
             scenario.click(R.id.editor_menu)
             capture("08-menu")
@@ -398,13 +232,6 @@ class DemoListFlowTest {
                 event.recycle()
             }
             SystemClock.sleep(12)
-        }
-    }
-
-    private fun ActivityScenario<MainActivity>.selectProductTab(index: Int) {
-        onActivity {
-            val tabs = it.findViewById<TabLayout>(R.id.product_tabs)
-            tabs.selectTab(tabs.getTabAt(index))
         }
     }
 

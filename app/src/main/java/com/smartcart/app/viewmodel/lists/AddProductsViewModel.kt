@@ -32,14 +32,6 @@ class AddProductsViewModel : ViewModel() {
         }
     }
 
-    fun scan(barcode: String) {
-        lookup?.cancel()
-        _results.value = Results(loading = true)
-        lookup = viewModelScope.launch {
-            show(products.findBarcode(barcode).map { listOfNotNull(it) })
-        }
-    }
-
     private fun show(result: Result<List<Product>>) {
         _results.value = result.fold(
             onSuccess = { Results(products = it, empty = it.isEmpty()) },

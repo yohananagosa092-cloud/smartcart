@@ -73,14 +73,6 @@ class DataLayerTest {
     }
 
     @Test
-    fun barcodeLookupFindsOnlyAnExactCatalogMatch() = runBlocking {
-        val milk = product("חלב")
-        assertEquals(milk, products.findBarcode(milk.barcode).getOrThrow())
-        assertNull(products.findBarcode("0").getOrThrow())
-        assertNull(products.findBarcode("a/b").getOrThrow())
-    }
-
-    @Test
     fun freeItemIsSavedWithoutABarcodeAndCannotStartAComparison() = runBlocking {
         val list = lists.createList("קניות").getOrThrow()
         val free = items.addFreeItem(list.id, "  פטרוזיליה  ").getOrThrow()

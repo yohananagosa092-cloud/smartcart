@@ -35,6 +35,29 @@
                 android:layout_height="48dp" android:gravity="start|center_vertical" android:text="@string/budget_title" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
+    <LinearLayout android:id="@+id/editor_note_panel"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:layout_marginTop="16dp" android:layout_marginBottom="24dp"
+        android:visibility="gone">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="@string/list_note_heading" android:textAppearance="@style/TextAppearance.SmartCart.TitleLarge" />
+        <TextView android:id="@+id/editor_note_product" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="24dp"
+            android:labelFor="@id/editor_note_input" android:textAppearance="@style/TextAppearance.SmartCart.Body" />
+        <com.google.android.material.textfield.TextInputLayout style="@style/Widget.SmartCart.Input"
+            android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp"
+            android:hint="@string/list_note">
+            <com.google.android.material.textfield.TextInputEditText android:id="@+id/editor_note_input"
+                style="@style/Widget.SmartCart.Input.EditText" android:inputType="textCapSentences|textMultiLine"
+                android:layout_width="match_parent" android:layout_height="wrap_content" android:maxLines="4" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.button.MaterialButton android:id="@+id/editor_note_save"
+            style="@style/Widget.SmartCart.Button.Primary" android:layout_width="match_parent"
+            android:layout_height="56dp" android:layout_marginTop="40dp" android:text="@string/list_note_save" />
+        <com.google.android.material.button.MaterialButton android:id="@+id/editor_note_cancel"
+            style="@style/Widget.SmartCart.Button.Secondary" android:layout_width="match_parent"
+            android:layout_height="48dp" android:text="@string/sc_cancel" />
+    </LinearLayout>
     <com.google.android.material.card.MaterialCardView android:id="@+id/editor_budget" android:layout_width="match_parent" android:layout_height="wrap_content" style="@style/Widget.SmartCart.Card"
         app:cardBackgroundColor="@color/sc_mint_soft" android:visibility="gone">
     <LinearLayout android:id="@+id/editor_budget_body" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" >

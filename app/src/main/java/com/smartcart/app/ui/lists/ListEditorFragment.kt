@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.EditText
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.core.content.ContextCompat
@@ -19,6 +20,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.smartcart.app.R
+import com.smartcart.app.data.model.ListItem
 import com.smartcart.app.ui.components.QuantitySelectorView
 import com.smartcart.app.ui.components.SwipeRevealCard
 import com.smartcart.app.viewmodel.lists.ListEditorViewModel
@@ -44,6 +46,34 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
         val budgetLabel = view.findViewById<TextView>(R.id.editor_budget_label)
         val budgetLeft = view.findViewById<TextView>(R.id.editor_budget_left)
         var namedMembers: Pair<List<String>, String>? = null
+        val notePanel = view.findViewById<View>(R.id.editor_note_panel)
+        val noteProduct = view.findViewById<TextView>(R.id.editor_note_product)
+        val noteInput = view.findViewById<EditText>(R.id.editor_note_input)
+        val noteSave = view.findViewById<View>(R.id.editor_note_save)
+        val noteCancel = view.findViewById<View>(R.id.editor_note_cancel)
+        var selectedItem: ListItem? = null
+
+        fun closeNote() {
+            selectedItem = null
+            val keyboard = ContextCompat.getSystemService(requireContext(), android.view.inputmethod.InputMethodManager::class.java)
+            keyboard?.hideSoftInputFromWindow(noteInput.windowToken, 0)
+            noteInput.clearFocus()
+            notePanel.isVisible = false
+        }
+        noteCancel.setOnClickListener { closeNote() }
+        noteSave.setOnClickListener {
+            val item = selectedItem ?: return@setOnClickListener
+            val value = noteInput.text.toString()
+            noteSave.isEnabled = false
+            noteCancel.isEnabled = false
+            write(view) {
+                val saved = model.note(id, item, value)
+                if (saved) closeNote()
+                noteSave.isEnabled = true
+                noteCancel.isEnabled = true
+                saved
+            }
+        }
 
         fun navigate(action: Int) = findNavController().navigate(action, bundleOf("listId" to id))
         fun showListAction(delete: Boolean) {
@@ -59,6 +89,7 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
             status.isVisible = true
             status.setText(R.string.list_missing)
             emptyDetail.isVisible = false
+            if (notePanel.isVisible) closeNote()
             rows.removeAllViews()
             listOf(share, menu, actions, members, budget).forEach { it.isVisible = false }
             add.isEnabled = false
@@ -145,15 +176,20 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
                         }
 
                         rows.removeAllViews()
+                        val editedItem = selectedItem
+                        if (editedItem != null && state.items.none { it.id == editedItem.id }) closeNote()
                         state.items.forEach { item ->
                             val row = layoutInflater.inflate(R.layout.list_item_row, rows, false)
                             row.findViewById<TextView>(R.id.list_row_name).text = item.name
                             val note = row.findViewById<TextView>(R.id.list_row_detail)
                             note.text = item.note.ifBlank { getString(R.string.list_note) }
                             note.setOnClickListener {
-                                editText(R.string.list_edit_note, item.note) { value ->
-                                    write(view) { model.note(id, item, value) }
-                                }
+                                if (!noteSave.isEnabled || selectedItem?.id == item.id) return@setOnClickListener
+                                selectedItem = item
+                                noteProduct.text = item.name
+                                noteInput.setText(item.note)
+                                notePanel.isVisible = true
+                                notePanel.post { (view as ScrollView).smoothScrollTo(0, notePanel.top) }
                             }
                             val quantity = row.findViewById<QuantitySelectorView>(R.id.list_row_quantity)
                             quantity.value = item.quantity
@@ -220,16 +256,6 @@ class ListEditorFragment : Fragment(R.layout.fragment_list_editor) {
         MaterialAlertDialogBuilder(requireContext()).setMessage(message)
             .setNegativeButton(R.string.sc_cancel, null)
             .setPositiveButton(action) { _, _ -> accept() }.show()
-    }
-
-    private fun editText(title: Int, initial: String, save: (String) -> Unit) {
-        val field = EditText(requireContext()).apply {
-            setText(initial)
-            setSelection(length())
-        }
-        MaterialAlertDialogBuilder(requireContext()).setTitle(title).setView(field)
-            .setNegativeButton(R.string.sc_cancel, null)
-            .setPositiveButton(R.string.list_save) { _, _ -> save(field.text.toString()) }.show()
     }
 
 }

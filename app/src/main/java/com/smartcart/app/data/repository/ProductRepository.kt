@@ -8,20 +8,6 @@ import com.smartcart.app.data.source.DataSource
 /** קטלוג המוצרים והרשתות (מסכים 07, 12). */
 class ProductRepository(private val dataSource: DataSource) {
 
-    suspend fun findBarcode(barcode: String): Result<Product?> = safeCall {
-        val code = barcode.trim()
-        if (code.isNotEmpty() && code.all { it in '0'..'9' }) {
-            // ML Kit can return a zero-prefixed EAN-13 as its equivalent 12-digit UPC-A.
-            val exact = dataSource.getProducts(listOf(code)).firstOrNull()
-            val alternate = when {
-                code.length == 12 -> "0$code"
-                code.length == 13 && code.startsWith('0') -> code.drop(1)
-                else -> null
-            }
-            exact ?: alternate?.let { dataSource.getProducts(listOf(it)).firstOrNull() }
-        } else null
-    }
-
     /**
      * חיפוש מוצרים במסך 07. מחפשים לפי המילה הראשונה בקטלוג, ומשאירים רק מוצרים
      * שכל מילה בחיפוש היא תחילת מילה בשם שלהם.
