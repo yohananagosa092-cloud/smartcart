@@ -53,7 +53,12 @@ class FakeAuthService : AuthService {
         return true
     }
 
-    override suspend fun sendPasswordReset(email: String) = Unit
+    private val resetRequests = mutableListOf<String>()
+    val requestedResetEmails: List<String> get() = resetRequests.toList()
+
+    override suspend fun sendPasswordReset(email: String) {
+        resetRequests.add(email)
+    }
 
     override suspend fun reauthenticate(password: String) {
         val account = current?.let { accounts[it] } ?: throw AppException(ErrorCode.NOT_SIGNED_IN)

@@ -36,6 +36,27 @@ class AuthRepositoryTest {
     }
 
     @Test
+    fun resetPasswordValidatesAndTrimsBeforeMakingTheRequest() = runBlocking<Unit> {
+        assertEquals(ErrorCode.INVALID_EMAIL, errorOf(auth.resetPassword("incorrect")))
+        assertTrue(service.requestedResetEmails.isEmpty())
+
+        auth.resetPassword("  example@example.invalid  ").getOrThrow()
+
+        assertEquals(listOf("example@example.invalid"), service.requestedResetEmails)
+    }
+
+    @Test
+    fun verificationResendWindowStartsAtTheLastSuccessfulSend() = runBlocking<Unit> {
+        val before = System.currentTimeMillis()
+        auth.signUp("יסכה", "yiska@test.com", "12345678").getOrThrow()
+        val after = System.currentTimeMillis()
+
+        assertTrue(auth.resendAvailableAt() in (before + 60_000)..(after + 60_000))
+        auth.signOut()
+        assertEquals(0L, auth.resendAvailableAt())
+    }
+
+    @Test
     fun verificationIsCheckedAgainstTheServer() = runBlocking<Unit> {
         auth.signUp("יסכה", "yiska@test.com", "12345678").getOrThrow()
         assertFalse(auth.checkEmailVerified().getOrThrow())
