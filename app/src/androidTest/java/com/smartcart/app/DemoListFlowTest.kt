@@ -15,6 +15,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.navigation.fragment.NavHostFragment
+import androidx.camera.view.PreviewView
 import androidx.test.core.app.ActivityScenario
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -260,6 +261,10 @@ class DemoListFlowTest {
                     getString(R.string.list_write_ok)
             }
             scenario.selectProductTab(1)
+            scenario.await {
+                findViewById<PreviewView>(R.id.product_preview)?.previewStreamState?.value ==
+                    PreviewView.StreamState.STREAMING
+            }
             scenario.click(R.id.product_barcode_lookup)
             scenario.await { findViewById<EditText>(R.id.product_barcode)?.error != null }
             scenario.setText(R.id.product_barcode, "0000000000017")
